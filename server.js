@@ -78,7 +78,7 @@ const auth = req => {
 function newUser(tg) {
   const u = {
     id: DB.uid(), tgId: tg.tgId || 0, steamId: tg.steamId || '', username: tg.username || '', name: tg.name || 'Player',
-    photo: tg.photo || '', bal: 1000, inv: [], refBy: 0, refCount: 0, tradeUrl: tg.tradeUrl || '',
+    photo: tg.photo || '', bal: 0, inv: [], refBy: 0, refCount: 0, tradeUrl: tg.tradeUrl || '',
     steamBonus: false, firstDepositTask: false, referLinkTask: false, dailyAt: 0,
     tasks: {}, seeds: { server: genSeed(), client: genSeed().slice(0, 16), nonce: 0 },
     stats: { opened: 0, wagered: 0, won: 0, battlesWon: 0 }, createdAt: Date.now(),

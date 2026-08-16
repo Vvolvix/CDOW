@@ -211,7 +211,7 @@ register('home', async (view) => {
             </div>
           </div>
           <div class="top-drop-img">
-            ${ART.itemArt(d, 120, 75)}
+            ${ART.itemArt(typeof d.item === 'object' && d.item ? d.item : { name: d.item || d.name, rarity: d.rarity || 'gold', weapon: 'rifle' }, 120, 75)}
           </div>
           <div class="top-drop-info">
             <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.item || '')}</div>

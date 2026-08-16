@@ -56,7 +56,7 @@ function setUser(u) { APP.user = u; renderHeader(); }
 async function boot() {
   APP.token = localStorage.getItem('cdow_token') || APP.token || 'guest_token';
   APP.config = await api('/config').catch(() => ({ siteName: 'CDOW' }));
-  try { setUser(await api('/me')); } catch { setUser({ name: 'Player', bal: 50000, photo: 'img/avatars/avatar_1.svg' }); }
+  try { setUser(await api('/me')); } catch { setUser(null); }
   APP.cases = await api('/cases').catch(() => (window.CDOW_CATALOG ? window.CDOW_CATALOG.CASES : []));
   try {
     if (typeof io === 'function') {

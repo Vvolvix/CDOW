@@ -4,26 +4,19 @@
 (function() {
   const isGitHubPages = location.hostname.endsWith('github.io') || location.protocol === 'file:';
 
-  // In-memory / localStorage state
+  // In-memory / localStorage state — Starts strictly NULL (no account) on first visit
   let user = JSON.parse(localStorage.getItem('cdow_gh_user') || 'null');
-  if (!user) {
-    user = {
-      id: 'usr_guest',
-      name: 'Player_' + Math.floor(1000 + Math.random() * 9000),
-      steamId: '76561198' + Math.floor(100000000 + Math.random() * 900000000),
-      photo: 'img/avatars/avatar_' + (Math.floor(Math.random() * 25) + 1) + '.svg',
-      bal: 50000,
-      inv: [],
-      joined: Date.now()
-    };
-    localStorage.setItem('cdow_gh_user', JSON.stringify(user));
-  }
 
   function saveUser() {
-    localStorage.setItem('cdow_gh_user', JSON.stringify(user));
-    if (window.APP && window.APP.user) window.APP.user.bal = user.bal;
+    if (user) {
+      localStorage.setItem('cdow_gh_user', JSON.stringify(user));
+      if (window.APP) window.APP.user = user;
+    } else {
+      localStorage.removeItem('cdow_gh_user');
+      if (window.APP) window.APP.user = null;
+    }
     const el = document.querySelector('#balval');
-    if (el) el.textContent = Math.round(user.bal).toLocaleString('en-US');
+    if (el) el.textContent = user ? Math.round(user.bal).toLocaleString('en-US') : '0';
   }
 
   // Standalone Socket Mock
@@ -47,18 +40,28 @@
         return { siteName: 'CDOW', mode: 'standalone' };
       }
 
-      // 2. Cases
+      // 2. Cases (52 Cases)
       if (path === '/cases') {
         return (window.CDOW_CATALOG && window.CDOW_CATALOG.CASES) || [];
       }
 
-      // 3. User & Auth
+      // 3. User & Auth — Starts with 0 coins upon registration
       if (path === '/me') {
+        if (!user) throw new Error('Not authenticated');
         return user;
       }
       if (path === '/auth/steam-direct' || path === '/auth/demo') {
         const name = body.steamInput || 'Player';
-        user.name = name;
+        user = {
+          id: 'usr_' + Date.now().toString(36),
+          name: name,
+          steamId: '76561198' + Math.floor(100000000 + Math.random() * 900000000),
+          photo: 'img/avatars/avatar_' + (Math.floor(Math.random() * 25) + 1) + '.svg',
+          bal: 0, // Starting balance is strictly 0 coins as requested
+          inv: [],
+          dailyAt: 0,
+          joined: Date.now()
+        };
         saveUser();
         return { token: 'gh_standalone_token', user };
       }
@@ -75,10 +78,10 @@
       // 5. Feed & Top Drops
       if (path === '/feed') {
         return [
-          { name: 'ShadowSniper99', photo: 'img/avatars/avatar_2.svg', value: 10000000, item: { name: 'AWP | Dragon Lore', weapon: 'sniper', rarity: 'covert', img: 'https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk4veqYaF7IfysCnWRxuF4j-B-Xxa_nBovp3Pdwtj9cC_GaAd0DZdwQu9fuhS4kNy0NePntVTbjYpCyyT_3CgY5i9j_a9cBkcCWUKV' } },
-          { name: 'PhantomBlade', photo: 'img/avatars/avatar_3.svg', value: 3400000, item: { name: '★ Butterfly Knife | Fade', weapon: 'knife', rarity: 'gold', img: 'https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsD2avx-9ytd5lRi67gVNwsDvSwtqqc3iXZg4kCZYjReYLtRbum9XgYuvm5wbWjtgUzCn3iSsf8G81tFEeH9rw' } },
-          { name: 'Vortex_CS', photo: 'img/avatars/avatar_1.svg', value: 12000000, item: { name: 'AK-47 | Wild Lotus', weapon: 'rifle', rarity: 'covert', img: 'https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlV61-LPGdCliWzeFkse1WQyC0nQlpsDuGyt-pdnyRPA4hDcYkR-QPuhi-wdPuYbyx5AaMidkQnC_-2ilIuzErvbi4ijV5Mw' } },
-          { name: 'NeonRider', photo: 'img/avatars/avatar_4.svg', value: 2800000, item: { name: '★ Sport Gloves | Vice', weapon: 'gloves', rarity: 'gold', img: 'https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Tk5UvzWCL2kpn2-DFk_OKherB0H_KfG2Kv0ed4u95lRi67gVNx4T-Bw434IHyVb1QlAsd1FOUDthG4xNznMu3m4QXXg90Wzn_33C1I8G81tLaDi_rK' } }
+          { name: 'ShadowSniper99', photo: 'img/avatars/avatar_2.svg', value: 10000000, item: { name: 'AWP | Dragon Lore', weapon: 'sniper', rarity: 'covert', img: (window.CDOW_SKIN_IMAGES && window.CDOW_SKIN_IMAGES['AWP | Dragon Lore']) } },
+          { name: 'PhantomBlade', photo: 'img/avatars/avatar_3.svg', value: 3400000, item: { name: '★ Butterfly Knife | Fade', weapon: 'knife', rarity: 'gold', img: (window.CDOW_SKIN_IMAGES && window.CDOW_SKIN_IMAGES['★ Butterfly Knife | Fade']) } },
+          { name: 'Vortex_CS', photo: 'img/avatars/avatar_1.svg', value: 12000000, item: { name: 'AK-47 | Wild Lotus', weapon: 'rifle', rarity: 'covert', img: (window.CDOW_SKIN_IMAGES && window.CDOW_SKIN_IMAGES['AK-47 | Wild Lotus']) } },
+          { name: 'NeonRider', photo: 'img/avatars/avatar_4.svg', value: 2800000, item: { name: '★ Sport Gloves | Vice', weapon: 'gloves', rarity: 'gold', img: (window.CDOW_SKIN_IMAGES && window.CDOW_SKIN_IMAGES['★ Sport Gloves | Vice']) } }
         ];
       }
       if (path === '/drops/top') {
@@ -92,13 +95,13 @@
 
       // 6. Case Open
       if (path === '/cases/open') {
+        if (!user) throw new Error('Please sign in first');
         const c = (window.CDOW_CATALOG.CASES || []).find(x => x.id === body.caseId);
         if (!c) throw new Error('Case not found');
-        if (user.bal < c.price) throw new Error('Insufficient coins balance');
+        if (user.bal < c.price) throw new Error('Insufficient coins balance — please top up');
         
         user.bal -= c.price;
         
-        // Roll mathematically
         const roll = Math.random();
         let acc = 0, dropped = c.items[c.items.length - 1];
         for (let i = 0; i < c.items.length; i++) {
@@ -106,7 +109,6 @@
           if (roll <= acc) { dropped = c.items[i]; break; }
         }
         
-        // Add to inventory
         user.inv.push({ ...dropped, dropId: 'd_' + Date.now() });
         saveUser();
         
@@ -118,13 +120,13 @@
 
       // 7. Double Roulette
       if (path === '/double/bet') {
+        if (!user) throw new Error('Please sign in first');
         const { color, amount } = body;
         if (!amount || amount < 10) throw new Error('Min bet is 10 coins');
-        if (user.bal < amount) throw new Error('Insufficient balance');
+        if (user.bal < amount) throw new Error('Insufficient coins balance');
         
         user.bal -= amount;
         
-        // Double roll 0-14 (0=green 14x, 1-7=red 2x, 8-14=black 2x)
         const roll = Math.floor(Math.random() * 15);
         const winColor = roll === 0 ? 'green' : (roll <= 7 ? 'red' : 'black');
         let winAmt = 0;
@@ -138,13 +140,13 @@
 
       // 8. X50 Spin
       if (path === '/x50/spin') {
+        if (!user) throw new Error('Please sign in first');
         const { amount } = body;
         if (!amount || amount < 10) throw new Error('Min bet is 10 coins');
-        if (user.bal < amount) throw new Error('Insufficient balance');
+        if (user.bal < amount) throw new Error('Insufficient coins balance');
         
         user.bal -= amount;
         
-        // Balanced X50 odds: 0: 60%, 1.2: 18%, 1.5: 12%, 2: 6%, 3: 2.5%, 5: 1%, 10: 0.4%, 50: 0.1%
         const r = Math.random();
         let mult = 0;
         if (r < 0.60) mult = 0;
@@ -164,9 +166,10 @@
 
       // 9. Upgrader Roll
       if (path === '/upgrader/roll') {
+        if (!user) throw new Error('Please sign in first');
         const { itemValue, targetValue, mode } = body;
         const mult = targetValue / itemValue;
-        const winChance = (0.95 / mult); // 95% RTP
+        const winChance = (0.95 / mult);
         const roll = Math.random() * 100;
         const targetNumber = mode === 'under' ? (winChance * 100) : (100 - (winChance * 100));
         const won = mode === 'under' ? (roll < targetNumber) : (roll > targetNumber);
@@ -178,11 +181,12 @@
         return { roll: Number(roll.toFixed(2)), won, balance: user.bal };
       }
 
-      // 10. Inventory & Wallet
+      // 10. Inventory, Wallet & Rewards
       if (path === '/inventory') {
-        return user.inv;
+        return user ? user.inv : [];
       }
       if (path === '/inventory/sell') {
+        if (!user) throw new Error('Please sign in first');
         const { dropId, value } = body;
         const idx = user.inv.findIndex(i => i.dropId === dropId);
         if (idx >= 0) user.inv.splice(idx, 1);
@@ -192,10 +196,17 @@
         return { success: true, coins, balance: user.bal };
       }
       if (path === '/wallet/deposit') {
+        if (!user) throw new Error('Please sign in first');
         const amt = Number(body.amount) || 50000;
         user.bal += amt;
         saveUser();
         return { success: true, balance: user.bal, coins: amt };
+      }
+      if (path === '/rewards/daily') {
+        if (!user) throw new Error('Please sign in first');
+        user.bal += 1000;
+        saveUser();
+        return { ok: true, coins: 1000, balance: user.bal };
       }
 
       return {};

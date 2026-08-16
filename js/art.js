@@ -40,7 +40,7 @@ function itemArt(item, w = 88, h = 52) {
   if (!item) return '';
   const name = String(item.name || '');
   const safeName = name.replace(/[&<>"']/g, '');
-  const imgUrl = item.img || (window.CATALOG_ITEMS && window.CATALOG_ITEMS[name]);
+  const imgUrl = item.img || (window.CDOW_SKIN_IMAGES && window.CDOW_SKIN_IMAGES[name]) || (window.CATALOG_ITEMS && window.CATALOG_ITEMS[name]);
   
   if (imgUrl) {
     return `<img class="w-art w-art-img" src="${imgUrl}" width="${w}" height="${h}" alt="${safeName}" loading="lazy" draggable="false" onerror="this.onerror=null;this.style.opacity='0.9'">`;

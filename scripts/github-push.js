@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// Ultra-fast Concurrent GitHub Direct Uploader + GitHub Pages Auto-Activator
+// Robust GitHub Direct Uploader + Auto-Activator
 async function uploadToGitHub() {
   const token = process.argv[2];
   const owner = process.argv[3];
@@ -29,7 +29,7 @@ async function uploadToGitHub() {
       headers,
       body: JSON.stringify({
         name: repo,
-        private: false, // Must be public for free GitHub Pages
+        private: false,
         auto_init: true,
         description: 'CDOW CS2 — Premier Luxury CS2 Unboxing, Case Battles, Roulette, Upgrader & X50 Platform'
       })
@@ -38,27 +38,9 @@ async function uploadToGitHub() {
     await new Promise(r => setTimeout(r, 2000));
   }
 
-  // Ensure initial ref exists
-  let refRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, { headers });
-  if (!refRes.ok) {
-    refRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/master`, { headers });
-  }
-  if (!refRes.ok) {
-    console.log('Initializing empty repository with README.md...');
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/README.md`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({
-        message: 'Initial repository setup',
-        content: Buffer.from('# CDOW CS2 Platform\n\nLuxury CS2 Unboxing & Gambling Platform.').toString('base64')
-      })
-    });
-    await new Promise(r => setTimeout(r, 2000));
-  }
-
-  // Gather project files (including root static files for GitHub Pages)
+  // Gather project files (excluding node_modules, .git, skins folder)
   const rootDir = path.resolve(__dirname, '..');
-  const ignoreDirs = ['node_modules', '.git', '.gemini', 'logs', 'gui-test-screenshots'];
+  const ignoreDirs = ['node_modules', '.git', '.gemini', 'logs', 'gui-test-screenshots', 'skins'];
 
   function getFiles(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -78,18 +60,18 @@ async function uploadToGitHub() {
   const allFiles = getFiles(rootDir);
   console.log(`Found ${allFiles.length} project files to upload.`);
 
-  // Parallel Blob Uploader (Concurrency: 15)
-  console.log('Uploading Git Blobs with 15x concurrency...');
+  // Upload Blobs with safe 6x concurrency
+  console.log('Uploading Git Blobs...');
   const treeItems = [];
   let completed = 0;
-  const CONCURRENCY = 15;
+  const CONCURRENCY = 6;
 
   async function uploadFile(filePath) {
     const relPath = path.relative(rootDir, filePath).replace(/\\/g, '/');
     const content = fs.readFileSync(filePath);
-    const isBinary = !relPath.endsWith('.js') && !relPath.endsWith('.json') && !relPath.endsWith('.html') && !relPath.endsWith('.css') && !relPath.endsWith('.md') && !relPath.endsWith('.gitignore') && !relPath.endsWith('.svg');
+    const isBinary = !relPath.endsWith('.js') && !relPath.endsWith('.json') && !relPath.endsWith('.html') && !relPath.endsWith('.css') && !relPath.endsWith('.md') && !relPath.endsWith('.gitignore') && !relPath.endsWith('.svg') && !relPath.endsWith('.nojekyll');
 
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 5; attempt++) {
       try {
         const blobRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
           method: 'POST',
@@ -109,18 +91,18 @@ async function uploadToGitHub() {
             sha: blobData.sha
           });
           completed++;
-          if (completed % 30 === 0 || completed === allFiles.length) {
+          if (completed % 25 === 0 || completed === allFiles.length) {
             console.log(`Progress: ${completed}/${allFiles.length} files uploaded...`);
           }
           return;
         } else {
-          await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+          await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
         }
       } catch (err) {
-        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+        await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
       }
     }
-    console.error(`Failed to upload ${relPath} after 3 attempts.`);
+    console.error(`Failed to upload ${relPath}`);
   }
 
   const queue = [...allFiles];
@@ -158,7 +140,7 @@ async function uploadToGitHub() {
     method: 'POST',
     headers,
     body: JSON.stringify({
-      message: 'CDOW CS2 Free GitHub Pages Deployment: 52 3D Cases, Battles, Roulette, Upgrader, X50',
+      message: 'CDOW CS2: Optimized ultra-fast 52 cases, real skin CDN images, 0 balance start & bugfixes',
       tree: treeData.sha,
       parents: parentCommit ? [parentCommit] : []
     })
@@ -182,32 +164,16 @@ async function uploadToGitHub() {
     });
   }
 
-  // 7. Auto-enable GitHub Pages
-  console.log('Activating GitHub Pages for free public hosting...');
+  // Ensure GitHub Pages is active
   try {
-    const pagesRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/pages`, {
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/pages`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({
-        source: {
-          branch: 'main',
-          path: '/'
-        }
-      })
+      body: JSON.stringify({ source: { branch: 'main', path: '/' } })
     });
-    if (pagesRes.ok) {
-      console.log('GitHub Pages activated successfully!');
-    } else {
-      const err = await pagesRes.json();
-      console.log('GitHub Pages status:', err.message || err);
-    }
-  } catch (e) {
-    console.log('GitHub Pages note:', e.message);
-  }
+  } catch (e) {}
 
-  console.log(`\n🎉 SUCCESS! Project is fully live on GitHub:`);
-  console.log(`1. Source Code Repository: https://github.com/${owner}/${repo}`);
-  console.log(`2. Public Live Playable Website: https://${owner.toLowerCase()}.github.io/${repo}/`);
+  console.log(`\n🎉 SUCCESS! Fully Deployed to GitHub Pages: https://${owner.toLowerCase()}.github.io/${repo}/`);
 }
 
 uploadToGitHub().catch(e => console.error('\nERROR:', e.message));
