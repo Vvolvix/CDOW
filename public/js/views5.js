@@ -475,7 +475,7 @@ register('profile', async (view) => {
 
   $('#logout').onclick = async () => {
     await api('/logout', { method: 'POST' }).catch(() => {});
-    APP.token = ''; localStorage.removeItem('cdow_token'); setUser(null); location.hash = '#/';
+    APP.token = ''; localStorage.removeItem('cdow_token'); localStorage.removeItem('cdow_user'); setUser(null); location.hash = '#/';
   };
 });
 

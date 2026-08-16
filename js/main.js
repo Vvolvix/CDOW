@@ -54,12 +54,23 @@ function cleanup() { APP.cleanups.forEach(f => { try { f(); } catch {} }); APP.c
 function setUser(u) { APP.user = u; renderHeader(); }
 
 async function boot() {
-  APP.token = localStorage.getItem('cdow_token') || APP.token || 'guest_token';
+  APP.token = localStorage.getItem('cdow_token') || '';
   APP.config = await api('/config').catch(() => ({ siteName: 'CDOW' }));
-  try { setUser(await api('/me')); } catch { setUser(null); }
+  if (APP.token) {
+    try {
+      setUser(await api('/me'));
+    } catch {
+      APP.token = '';
+      localStorage.removeItem('cdow_token');
+      localStorage.removeItem('cdow_user');
+      setUser(null);
+    }
+  } else {
+    setUser(null);
+  }
   APP.cases = await api('/cases').catch(() => (window.CDOW_CATALOG ? window.CDOW_CATALOG.CASES : []));
   try {
-    if (typeof io === 'function') {
+    if (typeof io === 'function' && !(window.CDOW_STANDALONE && window.CDOW_STANDALONE.isStatic)) {
       APP.socket = io({ auth: { token: APP.token } });
       APP.socket.on('bal', b => { if (APP.user) { APP.user.bal = b; const el = $('#balval'); if (el) { el.textContent = fmt(b); $('#balpill').classList.remove('bump'); void $('#balpill').offsetWidth; $('#balpill').classList.add('bump'); } } });
       APP.socket.on('feed:new', e => pushTicker(e));
@@ -237,6 +248,21 @@ function pushTicker(e) {
 // ---------------- Smart Steam Login & Profile Lookup ----------------
 function steamLogin() {
   SND.click();
+  if (window.CDOW_STANDALONE && window.CDOW_STANDALONE.isStatic) {
+    const steamName = prompt('Enter your Steam Username or Profile Name:');
+    if (!steamName || !steamName.trim()) return;
+    api('/auth/steam-direct', { method: 'POST', body: { steamInput: steamName.trim() } })
+      .then(res => {
+        APP.token = res.token;
+        localStorage.setItem('cdow_token', res.token);
+        setUser(res.user);
+        closeModal();
+        toast(`Welcome, ${res.user.name}! Connected 🎉`);
+        SND.coin();
+        route();
+      }).catch(e => toast(e.message, 'err'));
+    return;
+  }
   const ref = localStorage.getItem('cdow_ref');
   location.href = '/auth/steam' + (ref ? '?ref=' + encodeURIComponent(ref) : '');
 }
