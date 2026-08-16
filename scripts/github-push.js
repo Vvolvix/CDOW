@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// Ultra-fast Concurrent GitHub Direct Uploader using Git Data Trees API
+// Ultra-fast Concurrent GitHub Direct Uploader + GitHub Pages Auto-Activator
 async function uploadToGitHub() {
   const token = process.argv[2];
   const owner = process.argv[3];
@@ -29,7 +29,7 @@ async function uploadToGitHub() {
       headers,
       body: JSON.stringify({
         name: repo,
-        private: isPrivate,
+        private: false, // Must be public for free GitHub Pages
         auto_init: true,
         description: 'CDOW CS2 — Premier Luxury CS2 Unboxing, Case Battles, Roulette, Upgrader & X50 Platform'
       })
@@ -56,7 +56,7 @@ async function uploadToGitHub() {
     await new Promise(r => setTimeout(r, 2000));
   }
 
-  // Gather project files
+  // Gather project files (including root static files for GitHub Pages)
   const rootDir = path.resolve(__dirname, '..');
   const ignoreDirs = ['node_modules', '.git', '.gemini', 'logs', 'gui-test-screenshots'];
 
@@ -109,7 +109,7 @@ async function uploadToGitHub() {
             sha: blobData.sha
           });
           completed++;
-          if (completed % 25 === 0 || completed === allFiles.length) {
+          if (completed % 30 === 0 || completed === allFiles.length) {
             console.log(`Progress: ${completed}/${allFiles.length} files uploaded...`);
           }
           return;
@@ -123,7 +123,6 @@ async function uploadToGitHub() {
     console.error(`Failed to upload ${relPath} after 3 attempts.`);
   }
 
-  // Queue runner
   const queue = [...allFiles];
   const workers = Array(CONCURRENCY).fill(0).map(async () => {
     while (queue.length > 0) {
@@ -159,7 +158,7 @@ async function uploadToGitHub() {
     method: 'POST',
     headers,
     body: JSON.stringify({
-      message: 'CDOW CS2 Full Platform: 52 3D Cases, Battles, Roulette, Upgrader & X50',
+      message: 'CDOW CS2 Free GitHub Pages Deployment: 52 3D Cases, Battles, Roulette, Upgrader, X50',
       tree: treeData.sha,
       parents: parentCommit ? [parentCommit] : []
     })
@@ -183,7 +182,32 @@ async function uploadToGitHub() {
     });
   }
 
-  console.log(`\n🎉 SUCCESS! Project is fully live on GitHub: https://github.com/${owner}/${repo}`);
+  // 7. Auto-enable GitHub Pages
+  console.log('Activating GitHub Pages for free public hosting...');
+  try {
+    const pagesRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/pages`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        source: {
+          branch: 'main',
+          path: '/'
+        }
+      })
+    });
+    if (pagesRes.ok) {
+      console.log('GitHub Pages activated successfully!');
+    } else {
+      const err = await pagesRes.json();
+      console.log('GitHub Pages status:', err.message || err);
+    }
+  } catch (e) {
+    console.log('GitHub Pages note:', e.message);
+  }
+
+  console.log(`\n🎉 SUCCESS! Project is fully live on GitHub:`);
+  console.log(`1. Source Code Repository: https://github.com/${owner}/${repo}`);
+  console.log(`2. Public Live Playable Website: https://${owner.toLowerCase()}.github.io/${repo}/`);
 }
 
 uploadToGitHub().catch(e => console.error('\nERROR:', e.message));

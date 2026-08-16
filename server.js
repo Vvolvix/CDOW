@@ -402,10 +402,10 @@ app.get('/api/drops/top', w((req, res) => {
   const top = recentDrops.slice(0, 4);
   if (top.length < 4) {
     const defaults = [
-      { name: 'ShadowSniper99', photo: '/img/avatars/avatar_2.svg', item: byName['AWP | Dragon Lore'] || ITEMS[ITEMS.length - 2], from: 'Dragon Lore Vault' },
-      { name: 'PhantomBlade', photo: '/img/avatars/avatar_3.svg', item: byName['★ Butterfly Knife | Fade'] || ITEMS[ITEMS.length - 6], from: 'Knife Arena' },
-      { name: 'Vortex_CS', photo: '/img/avatars/avatar_1.svg', item: byName['AK-47 | Wild Lotus'] || ITEMS[ITEMS.length - 1], from: 'AK-47 Legends' },
-      { name: 'NeonRider', photo: '/img/avatars/avatar_4.svg', item: byName['★ Sport Gloves | Vice'] || ITEMS[ITEMS.length - 8], from: 'Gloves Paradise' },
+      { name: 'ShadowSniper99', photo: 'img/avatars/avatar_2.svg', item: byName['AWP | Dragon Lore'] || ITEMS[ITEMS.length - 2], from: 'Dragon Lore Vault' },
+      { name: 'PhantomBlade', photo: 'img/avatars/avatar_3.svg', item: byName['★ Butterfly Knife | Fade'] || ITEMS[ITEMS.length - 6], from: 'Knife Arena' },
+      { name: 'Vortex_CS', photo: 'img/avatars/avatar_1.svg', item: byName['AK-47 | Wild Lotus'] || ITEMS[ITEMS.length - 1], from: 'AK-47 Legends' },
+      { name: 'NeonRider', photo: 'img/avatars/avatar_4.svg', item: byName['★ Sport Gloves | Vice'] || ITEMS[ITEMS.length - 8], from: 'Gloves Paradise' },
     ];
     return res.json(defaults.map(d => ({
       name: d.name,
@@ -420,7 +420,7 @@ app.get('/api/drops/top', w((req, res) => {
   }
   res.json(top.map(t => ({
     name: t.name,
-    photo: t.photo || '/img/avatars/avatar_1.svg',
+    photo: t.photo || 'img/avatars/avatar_1.svg',
     item: t.item.name,
     weapon: t.item.weapon,
     rarity: t.item.rarity,
@@ -506,31 +506,31 @@ app.post('/api/inventory/withdraw', w((req, res) => {
 
 // ---------------- battles ----------------
 const GAMER_PROFILES = [
-  { name: 'Vortex_CS', photo: '/img/avatars/avatar_1.svg' },
-  { name: 'ShadowSniper99', photo: '/img/avatars/avatar_2.svg' },
-  { name: 'PhantomBlade', photo: '/img/avatars/avatar_3.svg' },
-  { name: 'NeonRider', photo: '/img/avatars/avatar_4.svg' },
-  { name: 'CyberGhost', photo: '/img/avatars/avatar_5.svg' },
-  { name: 'ApexPredator', photo: '/img/avatars/avatar_6.svg' },
-  { name: 'SilentReaper', photo: '/img/avatars/avatar_7.svg' },
-  { name: 'NovaStrike', photo: '/img/avatars/avatar_8.svg' },
-  { name: 'Krypton_9', photo: '/img/avatars/avatar_9.svg' },
-  { name: 'DarkMatter', photo: '/img/avatars/avatar_10.svg' },
-  { name: 'FrostByte', photo: '/img/avatars/avatar_11.svg' },
-  { name: 'ViperX', photo: '/img/avatars/avatar_12.svg' },
-  { name: 'GlitchCS', photo: '/img/avatars/avatar_13.svg' },
-  { name: 'AeroBlast', photo: '/img/avatars/avatar_14.svg' },
-  { name: 'TitanFall', photo: '/img/avatars/avatar_15.svg' },
-  { name: 'EchoWolf', photo: '/img/avatars/avatar_16.svg' },
-  { name: 'ZenithCS', photo: '/img/avatars/avatar_17.svg' },
-  { name: 'HyperDrive', photo: '/img/avatars/avatar_18.svg' },
-  { name: 'OmegaFox', photo: '/img/avatars/avatar_19.svg' },
-  { name: 'Pulse_99', photo: '/img/avatars/avatar_20.svg' },
-  { name: 'SpectreCS', photo: '/img/avatars/avatar_21.svg' },
-  { name: 'RedlineMaster', photo: '/img/avatars/avatar_22.svg' },
-  { name: 'MatrixPlayer', photo: '/img/avatars/avatar_23.svg' },
-  { name: 'HavocCS', photo: '/img/avatars/avatar_24.svg' },
-  { name: 'StrikeForce', photo: '/img/avatars/avatar_25.svg' },
+  { name: 'Vortex_CS', photo: 'img/avatars/avatar_1.svg' },
+  { name: 'ShadowSniper99', photo: 'img/avatars/avatar_2.svg' },
+  { name: 'PhantomBlade', photo: 'img/avatars/avatar_3.svg' },
+  { name: 'NeonRider', photo: 'img/avatars/avatar_4.svg' },
+  { name: 'CyberGhost', photo: 'img/avatars/avatar_5.svg' },
+  { name: 'ApexPredator', photo: 'img/avatars/avatar_6.svg' },
+  { name: 'SilentReaper', photo: 'img/avatars/avatar_7.svg' },
+  { name: 'NovaStrike', photo: 'img/avatars/avatar_8.svg' },
+  { name: 'Krypton_9', photo: 'img/avatars/avatar_9.svg' },
+  { name: 'DarkMatter', photo: 'img/avatars/avatar_10.svg' },
+  { name: 'FrostByte', photo: 'img/avatars/avatar_11.svg' },
+  { name: 'ViperX', photo: 'img/avatars/avatar_12.svg' },
+  { name: 'GlitchCS', photo: 'img/avatars/avatar_13.svg' },
+  { name: 'AeroBlast', photo: 'img/avatars/avatar_14.svg' },
+  { name: 'TitanFall', photo: 'img/avatars/avatar_15.svg' },
+  { name: 'EchoWolf', photo: 'img/avatars/avatar_16.svg' },
+  { name: 'ZenithCS', photo: 'img/avatars/avatar_17.svg' },
+  { name: 'HyperDrive', photo: 'img/avatars/avatar_18.svg' },
+  { name: 'OmegaFox', photo: 'img/avatars/avatar_19.svg' },
+  { name: 'Pulse_99', photo: 'img/avatars/avatar_20.svg' },
+  { name: 'SpectreCS', photo: 'img/avatars/avatar_21.svg' },
+  { name: 'RedlineMaster', photo: 'img/avatars/avatar_22.svg' },
+  { name: 'MatrixPlayer', photo: 'img/avatars/avatar_23.svg' },
+  { name: 'HavocCS', photo: 'img/avatars/avatar_24.svg' },
+  { name: 'StrikeForce', photo: 'img/avatars/avatar_25.svg' },
 ];
 
 const BOT_NAMES = GAMER_PROFILES.map(g => g.name);
