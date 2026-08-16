@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CDOW Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .admin-box { width: 100%; max-width: 900px; }
+    .adm-row { display: flex; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: var(--panel); }
+  </style>
+</head>
+<body>
+<div class="admin-box">
+  <h2 style="margin-bottom:6px">🛡️ CDOW Admin</h2>
+  <p class="muted" style="font-size:12.5px;margin-bottom:16px">Approve deposits &amp; withdrawals. Key = ADMIN_KEY in your .env</p>
+  <div class="row" style="margin-bottom:18px">
+    <input type="password" id="key" class="input grow" placeholder="Admin key">
+    <button class="btn" id="load">Load pending</button>
+  </div>
+  <div id="stats" class="grid3" style="margin-bottom:18px"></div>
+  <h3>Deposits</h3><div id="txs" class="muted">—</div>
+  <h3 style="margin-top:18px">Withdrawals</h3><div id="wds" class="muted">—</div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+let KEY = localStorage.getItem('cdow_admin') || '';
+if (KEY) $('#key').value = KEY;
+async function load() {
+  KEY = $('#key').value.trim(); localStorage.setItem('cdow_admin', KEY);
+  const r = await fetch('/api/admin/pending?key=' + encodeURIComponent(KEY)).then(x => x.json()).catch(() => null);
+  if (!r || r.error) return alert((r && r.error) || 'failed');
+  $('#stats').innerHTML = [['Users', r.stats.users], ['Coins in circulation', r.stats.coins.toLocaleString()], ['Cases opened', r.stats.opened]]
+    .map(([l, v]) => `<div class="stat-box"><div class="sv">${v}</div><div class="sl">${l}</div></div>`).join('');
+  $('#txs').innerHTML = r.transactions.length ? r.transactions.map(t => `
+    <div class="adm-row"><div class="grow"><b>${t.method.toUpperCase()}</b> · ${t.user} · ${t.amountUsd ? '$' + t.amountUsd + ' → ' + (t.coins || 0).toLocaleString() + 'c' : 'skins: ' + (t.details.items || '').slice(0, 60)}
+      <div class="muted" style="font-size:11px">${new Date(t.ts).toLocaleString()} ${t.details.txid ? '· txid ' + String(t.details.txid).slice(0, 24) : ''}</div></div>
+      <input type="number" class="input" style="max-width:110px" placeholder="coins" value="${t.coins || ''}" data-tx="${t.id}">
+      <button class="btn sm" onclick="act('tx', ${t.id}, this)">Approve</button></div>`).join('') : '<div class="muted">No pending deposits 🎉</div>';
+  $('#wds').innerHTML = r.withdrawals.length ? r.withdrawals.map(t => `
+    <div class="adm-row"><div class="grow"><b>${t.user}</b> → ${t.items.length} items
+      <div class="muted" style="font-size:11px">${t.items.join(', ').slice(0, 90)}</div></div>
+      <button class="btn sm" onclick="act('withdrawal', ${t.id}, this, false)">Approve</button>
+      <button class="btn sm red" onclick="act('withdrawal', ${t.id}, this, true)">Reject</button></div>`).join('') : '<div class="muted">No pending withdrawals 🎉</div>';
+}
+async function act(type, id, btn, reject) {
+  const coins = document.querySelector(`[data-tx="${id}"]`)?.value;
+  const r = await fetch('/api/admin/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: KEY, type, id, coins: coins ? +coins : undefined, approve: reject === true ? false : undefined }) }).then(x => x.json());
+  if (r.error) return alert(r.error);
+  load();
+}
+$('#load').onclick = load;
+if (KEY) load();
+</script>
+</body>
+</html>
