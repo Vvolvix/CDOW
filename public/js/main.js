@@ -54,20 +54,53 @@ function cleanup() { APP.cleanups.forEach(f => { try { f(); } catch {} }); APP.c
 function setUser(u) { APP.user = u; renderHeader(); }
 
 async function boot() {
-  APP.token = localStorage.getItem('cdow_token') || '';
-  APP.config = await api('/config').catch(() => ({ siteName: 'CDOW' }));
-  if (APP.token) {
-    try {
-      setUser(await api('/me'));
-    } catch {
-      APP.token = '';
-      localStorage.removeItem('cdow_token');
-      localStorage.removeItem('cdow_user');
-      setUser(null);
+  // Check for Steam OpenID redirect callback
+  const q = new URLSearchParams(location.search);
+  if (q.has('openid.claimed_id')) {
+    const claimed = q.get('openid.claimed_id');
+    const steamId = claimed.split('/').pop();
+    if (/^7656\d+$/.test(steamId)) {
+      const u = {
+        id: 'usr_' + steamId,
+        name: 'SteamPlayer_' + steamId.slice(-4),
+        steamId: steamId,
+        photo: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+        bal: 0,
+        inv: [],
+        tradeUrl: '',
+        refCode: steamId.slice(-6).toUpperCase(),
+        refCount: 0,
+        dailyAt: 0,
+        stats: { opened: 0, wagered: 0, won: 0, battlesWon: 0 },
+        createdAt: Date.now()
+      };
+      
+      APP.token = 'steam_' + steamId;
+      localStorage.setItem('cdow_token', APP.token);
+      localStorage.setItem('cdow_user', JSON.stringify(u));
+      setUser(u);
+      
+      history.replaceState({}, '', location.pathname + (location.hash || '#/'));
+      toast(`Signed in with Steam (${steamId})! Welcome 🎉`);
+      SND.coin();
     }
   } else {
-    setUser(null);
+    APP.token = localStorage.getItem('cdow_token') || '';
+    if (APP.token) {
+      try {
+        setUser(await api('/me'));
+      } catch {
+        APP.token = '';
+        localStorage.removeItem('cdow_token');
+        localStorage.removeItem('cdow_user');
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
   }
+
+  APP.config = await api('/config').catch(() => ({ siteName: 'CDOW' }));
   APP.cases = await api('/cases').catch(() => (window.CDOW_CATALOG ? window.CDOW_CATALOG.CASES : []));
   try {
     if (typeof io === 'function' && !(window.CDOW_STANDALONE && window.CDOW_STANDALONE.isStatic)) {
@@ -248,23 +281,17 @@ function pushTicker(e) {
 // ---------------- Smart Steam Login & Profile Lookup ----------------
 function steamLogin() {
   SND.click();
-  if (window.CDOW_STANDALONE && window.CDOW_STANDALONE.isStatic) {
-    const steamName = prompt('Enter your Steam Username or Profile Name:');
-    if (!steamName || !steamName.trim()) return;
-    api('/auth/steam-direct', { method: 'POST', body: { steamInput: steamName.trim() } })
-      .then(res => {
-        APP.token = res.token;
-        localStorage.setItem('cdow_token', res.token);
-        setUser(res.user);
-        closeModal();
-        toast(`Welcome, ${res.user.name}! Connected 🎉`);
-        SND.coin();
-        route();
-      }).catch(e => toast(e.message, 'err'));
-    return;
-  }
-  const ref = localStorage.getItem('cdow_ref');
-  location.href = '/auth/steam' + (ref ? '?ref=' + encodeURIComponent(ref) : '');
+  const returnUrl = location.origin + location.pathname;
+  const realmUrl = location.origin + location.pathname;
+  const params = new URLSearchParams({
+    'openid.ns': 'http://specs.openid.net/auth/2.0',
+    'openid.mode': 'checkid_setup',
+    'openid.return_to': returnUrl,
+    'openid.realm': realmUrl,
+    'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
+    'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select'
+  });
+  location.href = 'https://steamcommunity.com/openid/login?' + params.toString();
 }
 
 function loginModal() {
