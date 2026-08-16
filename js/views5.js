@@ -303,58 +303,138 @@ register('deposit', async (view) => {
   loadTxs();
 });
 
-// ---------------- TASKS ----------------
+// ---------------- TASKS & REAL-TIME 24H COUNTDOWNS ----------------
 register('tasks', async (view) => {
   if (needLogin()) return;
-  const { defs, state, daily, refCode, refCount } = await api('/tasks');
-  const refLink = location.origin + '/?ref=' + refCode;
+  const data = await api('/tasks');
+  const { defs, state, daily, refCode, refCount } = data;
+  const refLink = location.origin + location.pathname + '?ref=' + refCode;
   const groups = [...new Set(defs.map(d => d.group))];
+
+  function formatTime(leftMs) {
+    if (leftMs <= 0) return 'Ready to claim!';
+    const h = Math.floor(leftMs / 3600000);
+    const m = Math.floor((leftMs % 3600000) / 60000);
+    const s = Math.floor((leftMs % 60000) / 1000);
+    return `⏳ ${h}h ${m}m ${s}s`;
+  }
+
   view.innerHTML = `
     <div class="page-head"><div class="page-title"><span class="pico">${ART.ICONS.tasks}</span>Tasks &amp; Rewards</div></div>
     <div class="daily-hero">
       <div class="dnum">300</div>
-      <div class="grow"><b style="font-size:16px">Daily Free Coins</b><div class="muted" style="font-size:12.5px">${daily.ready ? 'Ready to claim!' : `Come back in ${daily.in}h ${daily.min}m`}</div></div>
-      <button class="btn gold big" id="dclaim" ${daily.ready ? '' : 'disabled'}>${ART.ICONS.gift} CLAIM 300</button>
+      <div class="grow">
+        <b style="font-size:16px">Daily Free Coins (+300)</b>
+        <div class="muted" style="font-size:12.5px" id="daily-timer-txt">${daily.ready ? 'Ready to claim!' : 'Next claim in: ' + formatTime(daily.leftMs)}</div>
+      </div>
+      <button class="btn gold big" id="dclaim" ${daily.ready ? '' : 'disabled'}>${ART.ICONS.gift} ${daily.ready ? 'CLAIM 300 COINS' : formatTime(daily.leftMs)}</button>
     </div>
+
     <div class="panel glow" style="margin-bottom:20px">
       <div class="row" style="flex-wrap:wrap">
-        <div class="grow"><b>👥 Your referral link</b>
-          <div class="addr-box" style="margin-top:8px"><span class="grow" id="reflink">${esc(refLink)}</span><button class="btn sm ghost" id="refcopy">Copy</button></div>
-          <div class="muted" style="font-size:12px;margin-top:6px">Invited: <b>${refCount}</b> friends · Earned: <b class="cyan">${fmt(refCount * 5000)}</b> coins (+5000 each)</div>
+        <div class="grow"><b>👥 Your Referral Link</b>
+          <div class="addr-box" style="margin-top:8px"><span class="grow" id="reflink">${esc(refLink)}</span><button class="btn sm ghost" id="refcopy">Copy Link</button></div>
+          <div class="muted" style="font-size:12px;margin-top:6px">Invited: <b>${refCount}</b> friends · Total Earned: <b class="cyan">${fmt(refCount * 5000)}</b> coins (+5,000 coins each)</div>
         </div>
       </div>
     </div>
+
     ${groups.map(g => `
       <div class="sec-title">${g}</div>
       ${defs.filter(d => d.group === g).map(d => {
-        const s = state[d.id];
-        const done = s && (s.done || (s.count !== undefined && false));
+        const s = state[d.id] || {};
+        const isOneTime = d.type === 'One-time';
+        const isDone = s.done;
+        const isReady = s.ready !== false;
+
+        let btnHTML = '';
+        if (d.auto) {
+          btnHTML = `<span class="task-reward">+${fmt(d.reward)}</span><span class="badge ok">Automatic</span>`;
+        } else if (isOneTime) {
+          btnHTML = isDone
+            ? '<span class="task-done" style="color:var(--green);font-weight:700">✓ Completed</span>'
+            : `<button class="btn sm green" data-claim="${d.id}">CLAIM +${fmt(d.reward)}</button>`;
+        } else {
+          // Daily task with countdown
+          btnHTML = isReady
+            ? `<button class="btn sm gold" data-claim="${d.id}">CLAIM +${fmt(d.reward)}</button>`
+            : `<button class="btn sm ghost" data-claim="${d.id}" disabled id="timer-${d.id}">${formatTime(s.leftMs)}</button>`;
+        }
+
         return `<div class="task-card">
           <div class="task-ic">${ART.ICONS[d.id === 'invite' ? 'users' : d.id === 'recharge' ? 'wallet' : d.id === 'daily_open' ? 'case' : d.id.includes('steam') || d.id === 'refer_link' ? 'link' : 'gift']}</div>
-          <div class="grow"><div class="task-name">${esc(d.name)}</div>
-            <div class="task-meta">${d.type}${d.id === 'invite' ? ` · ${s.count} invited so far` : ''}${d.desc ? ' · ' + d.desc : ''}</div></div>
-          ${d.auto
-            ? (d.id === 'recharge' ? (s.done ? '<span class="task-done">✓ Claimed</span>' : '<span class="badge pend">Make a deposit</span>')
-                                    : `<span class="task-reward">+${fmt(d.reward)}</span><span class="badge ok">Automatic</span>`)
-            : d.id === 'refer_link'
-              ? (s.done ? '<span class="task-done">✓ Claimed</span>' : `<button class="btn sm" data-claim="${d.id}">+${fmt(d.reward)}</button>`)
-              : `<button class="btn sm" data-claim="${d.id}" ${s && s.ready ? '' : 'disabled'}>CLAIM +${fmt(d.reward)}</button>`}
+          <div class="grow">
+            <div class="task-name">${esc(d.name)}</div>
+            <div class="task-meta">${d.type}${d.id === 'invite' ? ` · ${s.count || 0} invited` : ''}${d.desc ? ' · ' + d.desc : ''}</div>
+          </div>
+          ${btnHTML}
         </div>`;
-      }).join('')}`).join('')}
-    <div class="sec-title">Other</div>
-    <div class="muted" style="font-size:12.5px">Steam tasks: link your trade URL in <a href="#/profile">Profile</a> to unlock them.</div>`;
+      }).join('')}
+    `).join('')}
+    <div class="sec-title">Other Rewards</div>
+    <div class="muted" style="font-size:12.5px">Link your Steam Trade URL in <a href="#/profile">Profile</a> to instantly receive +300 bonus coins!</div>`;
+
+  // 100% Real-Time 1-Second Live Countdown Loop
+  let timerInterval = setInterval(() => {
+    if (daily.leftMs > 1000 && !daily.ready) {
+      daily.leftMs -= 1000;
+      const elTxt = $('#daily-timer-txt');
+      const elBtn = $('#dclaim');
+      if (elTxt) elTxt.textContent = 'Next claim in: ' + formatTime(daily.leftMs);
+      if (elBtn && elBtn.disabled) elBtn.innerHTML = `${ART.ICONS.gift} ${formatTime(daily.leftMs)}`;
+    } else if (daily.leftMs <= 1000 && !daily.ready) {
+      daily.ready = true;
+      const elBtn = $('#dclaim');
+      if (elBtn) { elBtn.disabled = false; elBtn.innerHTML = `${ART.ICONS.gift} CLAIM 300 COINS`; }
+      const elTxt = $('#daily-timer-txt');
+      if (elTxt) elTxt.textContent = 'Ready to claim!';
+    }
+
+    ['steam_name', 'steam_avatar', 'daily_open'].forEach(tid => {
+      const s = state[tid];
+      if (s && s.leftMs > 1000 && !s.ready) {
+        s.leftMs -= 1000;
+        const btn = $(`#timer-${tid}`);
+        if (btn) btn.textContent = formatTime(s.leftMs);
+      } else if (s && s.leftMs <= 1000 && !s.ready) {
+        s.ready = true;
+        const btn = $(`#timer-${tid}`);
+        if (btn) { btn.disabled = false; btn.className = 'btn sm gold'; btn.textContent = `CLAIM +250`; }
+      }
+    });
+  }, 1000);
+
+  onRoute(() => clearInterval(timerInterval));
+
   $('#dclaim').onclick = async () => {
-    try { const r = await api('/tasks/claim', { method: 'POST', body: { task: 'daily' } }); toast('Daily reward: +300 coins!'); SND.coin(); route(); }
-    catch (e) { toast(e.message, 'err'); }
+    try {
+      const r = await api('/tasks/claim', { method: 'POST', body: { task: 'daily' } });
+      setBal(r.balance);
+      toast(`Daily free coins claimed: +${fmt(r.got || 300)} coins credited 🎉`);
+      SND.cash();
+      route();
+    } catch (e) { toast(e.message, 'err'); }
   };
-  $('#refcopy').onclick = () => { navigator.clipboard.writeText(refLink); toast('Referral link copied!'); };
+
+  $('#refcopy').onclick = () => {
+    navigator.clipboard.writeText(refLink);
+    toast('Referral link copied to clipboard!');
+    SND.click();
+  };
+
   $$('[data-claim]').forEach(b => b.onclick = async () => {
-    try { const r = await api('/tasks/claim', { method: 'POST', body: { task: b.dataset.claim } }); toast(`Task rewarded: +${fmt(r.got)} coins!`); SND.coin(); route(); }
-    catch (e) { toast(e.message, 'err'); }
+    const tid = b.dataset.claim;
+    try {
+      const r = await api('/tasks/claim', { method: 'POST', body: { task: tid } });
+      setBal(r.balance);
+      toast(`Mission reward claimed: +${fmt(r.got)} coins credited 🎉`);
+      SND.cash();
+      route();
+    } catch (e) { toast(e.message, 'err'); }
   });
 });
 
-// ---------------- PROFILE (Steam Profile Sync & Trade URL) ----------------
+// ---------------- PROFILE (Steam Profile Sync & Customization) ----------------
 register('profile', async (view) => {
   if (needLogin()) return;
   const u = await api('/me');
@@ -365,49 +445,48 @@ register('profile', async (view) => {
   view.innerHTML = `
     <div class="page-head">
       <div class="row">
-        <div class="avatar" style="width:48px;height:48px;font-size:18px">
-          ${u.photo ? `<img src="${esc(u.photo)}" alt="Avatar">` : esc(u.name.slice(0, 2).toUpperCase())}
+        <div class="avatar" style="width:52px;height:52px;font-size:18px">
+          ${u.photo ? `<img src="${esc(u.photo)}" alt="Avatar" onerror="this.src='img/avatars/avatar_1.svg'">` : esc(u.name.slice(0, 2).toUpperCase())}
         </div>
         <div>
           <div class="page-title" style="margin-bottom:0">${esc(u.name)}</div>
-          <div class="muted" style="font-size:12px">Member since ${new Date(u.createdAt).toLocaleDateString()}</div>
+          <div class="muted" style="font-size:12px">Steam ID: <b>${esc(u.steamId || 'Linked')}</b> · Member since ${new Date(u.createdAt || Date.now()).toLocaleDateString()}</div>
         </div>
       </div>
-      <div class="row">
-        <button class="btn ghost sm" id="syncSteamBtn" title="Re-fetch avatar & name from Steam">${ART.ICONS.refresh} Sync Steam Profile</button>
+      <div class="row" style="gap:8px">
+        <button class="btn ghost sm" id="editSteamProfileBtn" title="Edit Persona Name & Avatar">${ART.ICONS.user} Edit Steam Profile</button>
         <button class="btn ghost sm" id="logout">Logout</button>
       </div>
     </div>
 
     <div class="grid3" style="margin-bottom:20px">
-      <div class="stat-box"><div class="sv">${fmt(u.stats.opened)}</div><div class="sl">Cases opened</div></div>
-      <div class="stat-box"><div class="sv">${fmt(u.stats.wagered)}</div><div class="sl">Total wagered</div></div>
-      <div class="stat-box"><div class="sv">${fmt(u.stats.battlesWon)}</div><div class="sl">Battles won</div></div>
+      <div class="stat-box"><div class="sv">${fmt((u.stats && u.stats.opened) || 0)}</div><div class="sl">Cases opened</div></div>
+      <div class="stat-box"><div class="sv">${fmt((u.stats && u.stats.wagered) || 0)}</div><div class="sl">Total wagered</div></div>
+      <div class="stat-box"><div class="sv">${fmt((u.stats && u.stats.battlesWon) || 0)}</div><div class="sl">Battles won</div></div>
     </div>
 
     <div class="panel" style="margin-bottom:20px">
       <div class="row" style="justify-content:space-between;flex-wrap:wrap">
         <div>
-          <b>🔗 Steam Trade URL</b> <span class="muted" style="font-size:12px">— link once and get <b class="cyan">+300 coins</b></span>
+          <b>🔗 Steam Trade URL</b> <span class="muted" style="font-size:12px">— link once and get <b class="cyan">+300 coins bonus</b></span>
         </div>
         <a href="https://steamcommunity.com/id/volvixxx/tradeoffers/privacy" target="_blank" class="tradeurl-helper-link">
           Where to find it? ${ART.ICONS.external}
         </a>
       </div>
       <div class="row" style="margin-top:10px;flex-wrap:wrap">
-        <input type="text" id="turl" class="input grow" style="min-width:260px" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...&token=..." value="${esc(u.tradeUrl)}">
+        <input type="text" id="turl" class="input grow" style="min-width:260px" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...&token=..." value="${esc(u.tradeUrl || '')}">
         <button class="btn gold" id="tsave">Save Trade URL</button>
       </div>
-      <div class="muted" style="font-size:11.5px;margin-top:6px">Required for skin withdrawals and automatic case battle delivery.</div>
+      <div class="muted" style="font-size:11.5px;margin-top:6px">Required for CS2 skin withdrawals and instant trade delivery.</div>
     </div>
 
     <div class="page-title" style="font-size:18px;margin-bottom:12px">🎒 Inventory <span class="muted" style="font-size:13px">(${inv.length} items)</span></div>
     <div class="panel">
       <div class="row" style="margin-bottom:14px;flex-wrap:wrap">
-        <span class="muted">Selected: <b class="cyan" id="selcount">0</b> items worth <b class="cyan" id="selval">0</b></span>
+        <span class="muted">Selected: <b class="cyan" id="selcount">0</b> items worth <b class="cyan" id="selval">0</b> coins</span>
         <div class="grow"></div>
-        <button class="btn gold" id="sellsel">SELL (90%)</button>
-        <button class="btn" id="withdrawsel">${ART.ICONS.withdraw} WITHDRAW TO STEAM</button>
+        <button class="btn gold" id="sellsel">SELL FOR COINS (90%)</button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px" id="invgrid"></div>
     </div>`;
@@ -426,22 +505,38 @@ register('profile', async (view) => {
   const updSel = () => { $('#selcount').textContent = sel.size; $('#selval').textContent = fmt(selVal()); };
   renderInv(); updSel();
 
-  $('#syncSteamBtn').onclick = async () => {
-    try {
-      const r = await api('/auth/steam-sync', { method: 'POST' });
-      setUser(r.user);
-      toast('Steam profile synced with latest avatar & name!');
-      SND.coin();
-      route();
-    } catch (e) {
-      toast(e.message, 'err');
-    }
+  $('#editSteamProfileBtn').onclick = () => {
+    closeModal();
+    modal(`<button class="close-x" onclick="closeModal()">✕</button>
+      <h2>🎮 Edit Steam Persona &amp; Avatar</h2>
+      <p class="muted" style="font-size:13px;margin-bottom:14px">Customize your displayed Steam name and avatar photo:</p>
+      <label class="f">STEAM PERSONA NAME</label>
+      <input type="text" id="steamNameInput" class="input full" value="${esc(u.name)}" placeholder="e.g. Volvix">
+      <label class="f" style="margin-top:12px">AVATAR IMAGE URL</label>
+      <input type="text" id="steamAvatarInput" class="input full" value="${esc(u.photo || '')}" placeholder="https://avatars.steamstatic.com/...">
+      <div class="row" style="margin-top:16px;justify-content:flex-end">
+        <button class="btn green big" id="saveSteamProfileBtn">Save &amp; Update</button>
+      </div>`);
+
+    $('#saveSteamProfileBtn').onclick = async () => {
+      const newName = $('#steamNameInput').value.trim() || u.name;
+      const newPhoto = $('#steamAvatarInput').value.trim() || u.photo;
+      try {
+        const res = await api('/profile/update', { method: 'POST', body: { name: newName, photo: newPhoto } });
+        setUser(res.user || u);
+        closeModal();
+        toast('Steam profile updated successfully! 🎉');
+        SND.coin();
+        route();
+      } catch (e) { toast(e.message, 'err'); }
+    };
   };
 
   $('#tsave').onclick = async () => {
     try {
       const r = await api('/profile/tradeurl', { method: 'POST', body: { url: $('#turl').value } });
-      toast(r.bonus ? `Steam Trade URL linked! +${r.bonus} bonus coins 🎉` : 'Trade URL saved successfully');
+      if (r.bonus) setBal((u.bal || 0) + r.bonus);
+      toast(r.bonus ? `Steam Trade URL linked! +${r.bonus} bonus coins credited 🎉` : 'Trade URL saved successfully');
       SND.coin();
       refreshUser();
     } catch (e) {
@@ -454,19 +549,8 @@ register('profile', async (view) => {
     try {
       const r = await api('/inventory/sell', { method: 'POST', body: { ids: [...sel] } });
       setBal(r.balance);
-      toast(`Sold for ${fmt(r.got)} coins`);
+      toast(`Sold items for +${fmt(r.got)} coins!`);
       SND.coin();
-      route();
-    } catch (e) {
-      toast(e.message, 'err');
-    }
-  };
-
-  $('#withdrawsel').onclick = async () => {
-    if (!sel.size) return toast('Select items first', 'err');
-    try {
-      await api('/inventory/withdraw', { method: 'POST', body: { ids: [...sel] } });
-      toast('Withdrawal requested — items will be sent via Steam Trade Offer');
       route();
     } catch (e) {
       toast(e.message, 'err');

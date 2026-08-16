@@ -1,10 +1,11 @@
 // CDOW — Complete Standalone Client Simulation Engine for GitHub Pages (100% Free Hosting)
-// Implements 100% of all platform endpoints: 52 cases, Case Battles, Double, Upgrader, X50, Royal, Rushmid, Profile, Inventory, Tasks, Deposit.
+// Implements 100% of all platform endpoints: 52 cases, Case Battles, Double, Upgrader, X50, Profile, Inventory, Tasks, Real Daily Countdowns.
 
 (function() {
   const isStaticHost = location.hostname.endsWith('github.io') || location.protocol === 'file:';
+  const DAY_MS = 24 * 3600 * 1000;
 
-  // 1. Initial State — Fresh visitors start as GUEST (Unauthenticated, 0 coins)
+  // Initial State — Fresh visitors start as GUEST (Unauthenticated, 0 coins)
   let user = JSON.parse(localStorage.getItem('cdow_user') || 'null');
 
   function saveUser() {
@@ -56,7 +57,6 @@
   setInterval(() => {
     const now = Date.now();
     if (dblState.phase === 'bet') {
-      // Simulate random bot bets
       if (Math.random() < 0.35 && dblState.bets.length < 8) {
         const bot = BOTS[Math.floor(Math.random() * BOTS.length)];
         const side = Math.random() < 0.15 ? 'gold' : (Math.random() < 0.5 ? 'cyan' : 'dark');
@@ -70,8 +70,7 @@
         const winSide = winNum === 0 ? 'gold' : (winNum <= 7 ? 'dark' : 'cyan');
         dblState.result = { num: winNum, side: winSide };
         dblState.endsAt = now + 6500;
-        
-        // Award user if bet
+
         if (user) {
           const userBets = dblState.bets.filter(b => b.u === user.id);
           userBets.forEach(b => {
@@ -174,6 +173,16 @@
     }
   ];
 
+  // ---------------- TASK DEFINITIONS ----------------
+  const TASK_DEFINITIONS = [
+    { id: 'invite', name: 'Invite a friend', reward: 5000, type: 'Unlimited', group: 'TOP Tasks', desc: 'Invite friends with your referral link. +5000 for each one who joins.', auto: true },
+    { id: 'recharge', name: 'Recharge balance', reward: 6500, type: 'One-time', group: 'TOP Tasks', desc: 'Make your first deposit to get +6500 bonus coins.', auto: false },
+    { id: 'refer_link', name: 'Share your referral link', reward: 500, type: 'One-time', group: 'Other', desc: 'Share your unique CDOW link anywhere.' },
+    { id: 'steam_name', name: 'Add CDOW to your Steam Name', reward: 250, type: 'Daily', group: 'Daily Freebies', desc: 'Include CDOW.COM in your Steam persona name.' },
+    { id: 'steam_avatar', name: 'Set CDOW Steam avatar', reward: 250, type: 'Daily', group: 'Daily Freebies', desc: 'Use any CS2 avatar on your profile.' },
+    { id: 'daily_open', name: 'Open any case today', reward: 250, type: 'Daily', group: 'Daily Freebies', desc: 'Open at least 1 case today for free reward.' }
+  ];
+
   // ---------------- STANDALONE API ROUTER ----------------
   window.CDOW_STANDALONE = {
     isStatic: isStaticHost,
@@ -196,32 +205,36 @@
       // 3. User & Authentication
       if (path === '/me') {
         if (!user) throw new Error('Not authenticated');
+        if (!user.tasks) user.tasks = {};
         return user;
       }
       if (path === '/auth/steam-direct' || path === '/auth/demo' || path === '/auth/steam') {
         const name = (body.steamInput || 'Player_' + Math.floor(1000 + Math.random() * 9000)).trim();
+        const photo = body.photo || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
         user = {
           id: 'usr_' + Date.now().toString(36),
           name: name,
           steamId: '76561198' + Math.floor(100000000 + Math.random() * 900000000),
-          photo: 'img/avatars/avatar_' + (Math.floor(Math.random() * 25) + 1) + '.svg',
+          photo: photo,
           bal: 0, // Starts at 0 coins as requested
           inv: [],
           tradeUrl: '',
           refCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
           refCount: 0,
           dailyAt: 0,
+          tasks: {},
           stats: { opened: 0, wagered: 0, won: 0, battlesWon: 0 },
           createdAt: Date.now()
         };
         saveUser();
         return { token: 'gh_standalone_token', user };
       }
-      if (path === '/auth/steam-sync') {
+      if (path === '/auth/steam-sync' || path === '/profile/update') {
         if (!user) throw new Error('Not authenticated');
-        user.photo = 'img/avatars/avatar_' + (Math.floor(Math.random() * 25) + 1) + '.svg';
+        if (body.name) user.name = body.name.trim();
+        if (body.photo) user.photo = body.photo.trim();
         saveUser();
-        return { user };
+        return { ok: true, user };
       }
       if (path === '/profile/tradeurl') {
         if (!user) throw new Error('Not authenticated');
@@ -339,7 +352,6 @@
 
       // 8. Upgrader Targets & Roll
       if (path.startsWith('/upgrader/targets')) {
-        const bet = +(path.split('bet=')[1] || 100);
         const skins = window.CDOW_SKIN_IMAGES || {};
         const items = (window.CDOW_CATALOG && window.CDOW_CATALOG.ITEMS) || [];
         return items.map((it, idx) => ({
@@ -348,7 +360,7 @@
           rarity: it.rarity,
           weapon: it.weapon || 'rifle',
           value: it.value,
-          img: skins[it.name]
+          img: skins[it.name] || it.img
         })).sort((a, b) => a.value - b.value);
       }
       if (path === '/upgrader/roll') {
@@ -357,11 +369,10 @@
         const skins = window.CDOW_SKIN_IMAGES || {};
         const items = (window.CDOW_CATALOG && window.CDOW_CATALOG.ITEMS) || [];
         const targets = items.map((it, idx) => ({
-          id: 'upg_' + idx, name: it.name, rarity: it.rarity, weapon: it.weapon || 'rifle', value: it.value, img: skins[it.name]
+          id: 'upg_' + idx, name: it.name, rarity: it.rarity, weapon: it.weapon || 'rifle', value: it.value, img: skins[it.name] || it.img
         }));
         const target = targets.find(t => t.id === targetId) || targets[0];
-        
-        // Deduct items or balance
+
         if (itemIds && itemIds.length) {
           user.inv = user.inv.filter(i => !itemIds.includes(i.id));
         } else {
@@ -432,11 +443,10 @@
         if (!b) throw new Error('Battle not found');
         const bot = BOTS[Math.floor(Math.random() * BOTS.length)];
         b.players.push({ id: bot.id, name: bot.name, photo: bot.photo, total: 0, drops: [] });
-        
+
         const slots = { '1v1': 2, '1v1v1': 3, '1v1v1v1': 4, '2v2': 4 }[b.mode] || 2;
         if (b.players.length >= slots) {
           b.state = 'live';
-          // Run battle simulation
           const c = (window.CDOW_CATALOG.CASES || []).find(x => x.id === b.caseId);
           b.results = [];
           for (let r = 0; r < b.rounds; r++) {
@@ -457,8 +467,7 @@
             b.results.push(roundDrops);
           }
           b.state = 'done';
-          
-          // Determine winner
+
           const winner = [...b.players].sort((a, b) => b.total - a.total)[0];
           if (user && winner.id === user.id) {
             user.stats.battlesWon += 1;
@@ -489,41 +498,89 @@
         });
         user.bal += totalCoins;
         saveUser();
-        return { success: true, coins: totalCoins, balance: user.bal };
+        return { success: true, got: totalCoins, balance: user.bal };
       }
 
-      // 11. Tasks & Daily Rewards
+      // 11. Tasks & 100% Accurate Real-Time Daily Countdown
       if (path === '/tasks') {
-        const DAY_MS = 22 * 3600 * 1000;
-        const dailyReady = !user || (Date.now() - user.dailyAt >= DAY_MS);
+        const uTasks = (user && user.tasks) || {};
+        const dailyLast = (user && user.dailyAt) || 0;
+        const dailyElapsed = Date.now() - dailyLast;
+        const dailyReady = dailyElapsed >= DAY_MS;
+        const dailyRem = Math.max(0, DAY_MS - dailyElapsed);
+
+        const state = {
+          invite: { count: user ? user.refCount : 0 },
+          recharge: { done: !!uTasks.recharge },
+          refer_link: { done: !!uTasks.refer_link }
+        };
+
+        ['steam_name', 'steam_avatar', 'daily_open'].forEach(tid => {
+          const last = uTasks[tid] || 0;
+          const elapsed = Date.now() - last;
+          const ready = elapsed >= DAY_MS;
+          const leftMs = Math.max(0, DAY_MS - elapsed);
+          state[tid] = {
+            ready,
+            last,
+            leftMs,
+            in: Math.floor(leftMs / 3600000),
+            min: Math.floor((leftMs % 3600000) / 60000),
+            sec: Math.floor((leftMs % 60000) / 1000)
+          };
+        });
+
         return {
-          defs: [
-            { id: 'invite', name: 'Invite a friend', reward: 5000, type: 'Unlimited', group: 'TOP Tasks', desc: 'Invite friends with your referral link. +5000 for each one who joins.', auto: true },
-            { id: 'recharge', name: 'Recharge balance', reward: 6500, type: 'One-time', group: 'TOP Tasks', desc: 'Make your first deposit. +6500 automatically.', auto: true },
-            { id: 'daily_open', name: 'Open any case today', reward: 250, type: 'Daily', group: 'Daily Freebies' },
-            { id: 'refer_link', name: 'Share your referral link', reward: 500, type: 'One-time', group: 'Other' }
-          ],
-          state: {
-            invite: { count: user ? user.refCount : 0 },
-            recharge: { done: false },
-            daily_open: { ready: true },
-            refer_link: { done: false }
-          },
+          defs: TASK_DEFINITIONS,
+          state,
           daily: {
             ready: dailyReady,
-            in: 22,
-            min: 0
+            last: dailyLast,
+            leftMs: dailyRem,
+            in: Math.floor(dailyRem / 3600000),
+            min: Math.floor((dailyRem % 3600000) / 60000),
+            sec: Math.floor((dailyRem % 60000) / 1000)
           },
           refCode: user ? user.refCode : 'CDOW',
           refCount: user ? user.refCount : 0
         };
       }
+
       if (path === '/tasks/claim') {
         if (!user) throw new Error('Please sign in first');
-        user.bal += 300;
-        user.dailyAt = Date.now();
-        saveUser();
-        return { ok: true, balance: user.bal };
+        if (!user.tasks) user.tasks = {};
+        const taskName = body.task;
+
+        if (taskName === 'daily') {
+          const elapsed = Date.now() - (user.dailyAt || 0);
+          if (elapsed < DAY_MS) throw new Error('Daily reward is not ready yet');
+          user.dailyAt = Date.now();
+          user.bal += 300;
+          saveUser();
+          return { ok: true, got: 300, balance: user.bal };
+        }
+
+        const def = TASK_DEFINITIONS.find(t => t.id === taskName);
+        if (!def) throw new Error('Task not found');
+
+        if (def.type === 'One-time') {
+          if (user.tasks[taskName]) throw new Error('This one-time task has already been claimed');
+          user.tasks[taskName] = true;
+          user.bal += def.reward;
+          saveUser();
+          return { ok: true, got: def.reward, balance: user.bal };
+        }
+
+        if (def.type === 'Daily') {
+          const last = user.tasks[taskName] || 0;
+          if (Date.now() - last < DAY_MS) throw new Error('This daily task is not ready yet');
+          user.tasks[taskName] = Date.now();
+          user.bal += def.reward;
+          saveUser();
+          return { ok: true, got: def.reward, balance: user.bal };
+        }
+
+        throw new Error('Task cannot be claimed manually');
       }
 
       // 12. Deposits (PayForm, Unlimit, SkinsBack)
@@ -531,6 +588,8 @@
         if (!user) throw new Error('Please sign in first');
         const amtCoins = (body.amountUsd ? body.amountUsd * 1000 : (body.estimatedUsd ? body.estimatedUsd * 1000 : 25000));
         user.bal += amtCoins;
+        if (!user.tasks) user.tasks = {};
+        user.tasks.recharge = true; // Mark first deposit task as completed
         saveUser();
         return {
           tx: { id: 'tx_' + Date.now(), coins: amtCoins },
