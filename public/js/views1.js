@@ -145,8 +145,8 @@ register('home', async (view) => {
       ${games.map(([href, ic, t, d]) => `<div class="game-card" onclick="location.hash='${href}'"><div class="shine"></div><div class="gico">${ART.ICONS[ic]}</div><h3>${t}</h3><p>${d}</p></div>`).join('')}
     </div>
 
-    <div class="sec-title">Featured 3D Cases</div>
-    <div class="case-grid">${APP.cases.slice(0, 8).map(caseCardHTML).join('')}</div>
+    <div class="sec-title">👑 Featured High-Roller VIP Cases</div>
+    <div class="case-grid">${APP.cases.slice().sort((a, b) => b.price - a.price).slice(0, 8).map(caseCardHTML).join('')}</div>
     <div style="margin-top:20px;text-align:center"><button class="btn ghost big" onclick="location.hash='#/cases'">View all ${APP.cases.length} cases →</button></div>
 
     <!-- Top Drops of the Day (Hall of Fame) -->

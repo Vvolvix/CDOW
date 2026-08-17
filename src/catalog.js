@@ -1,6 +1,4 @@
 // CDOW — CS2 Items & 52 Cases Catalog. MADE BY VOLVIX.
-// Value in coins: 1,000 coins = $1.00 USD (Max case price: 1,000,000 coins = $1,000.00).
-
 const RARITY = {
   "consumer": {
     "name": "Consumer",
@@ -38,221 +36,1126 @@ const RARITY = {
     "w": 5
   }
 };
-
-let _id = 0;
-const I = (name, weapon, rarity, value) => ({ id: 'it' + (++_id), name, weapon, rarity, value });
-
 const ITEMS = [
-  I("P250 | Sand Dune", "pistol", "consumer", 50),
-  I("Nova | Predator", "heavy", "consumer", 80),
-  I("FAMAS | Colony", "rifle", "consumer", 110),
-  I("MP7 | Forest DDPAT", "smg", "consumer", 140),
-  I("SG 553 | Army Sheen", "rifle", "consumer", 170),
-  I("G3SG1 | Desert Storm", "sniper", "consumer", 190),
-  I("MAG-7 | Storm", "heavy", "consumer", 230),
-  I("PP-Bizon | Urban Dashed", "smg", "consumer", 270),
-  I("M249 | Contrast Spray", "heavy", "consumer", 310),
-  I("Galil AR | Sage Spray", "rifle", "consumer", 360),
-  I("Dual Berettas | Colony", "pistol", "consumer", 400),
-  I("MP9 | Storm", "smg", "industrial", 480),
-  I("AUG | Sweeper", "rifle", "industrial", 550),
-  I("SSG 08 | Mainframe 001", "sniper", "industrial", 650),
-  I("Glock-18 | High Beam", "pistol", "industrial", 750),
-  I("Glock-18 | Grinder", "pistol", "industrial", 850),
-  I("Tec-9 | Bamboozle", "pistol", "industrial", 920),
-  I("UMP-45 | Urban DDPAT", "smg", "milspec", 1200),
-  I("MAC-10 | Silver", "smg", "industrial", 1400),
-  I("Five-SeveN | Case Hardened", "pistol", "industrial", 1600),
-  I("Desert Eagle | Mudder", "pistol", "industrial", 1800),
-  I("MAC-10 | Curse", "smg", "milspec", 2200),
-  I("AK-47 | Safari Mesh", "rifle", "milspec", 2500),
-  I("P90 | Grim", "smg", "milspec", 2800),
-  I("Desert Eagle | Light Rail", "pistol", "milspec", 3500),
-  I("M4A1-S | Night Terror", "rifle", "milspec", 4200),
-  I("P250 | Valence", "pistol", "milspec", 4800),
-  I("Music Kit | ALRT, DOPAMINE HIT", "music", "milspec", 3500),
-  I("Music Kit | bbno$, u mad!", "music", "milspec", 4800),
-  I("Music Kit | Knock2, dashstar*", "music", "milspec", 5500),
-  I("Music Kit | Denzel Curry, ULTIMATE", "music", "milspec", 6500),
-  I("Music Kit | AWOLNATION, I Am", "music", "milspec", 8500),
-  I("Music Kit | Mord Fustang, Diamonds", "music", "milspec", 9500),
-  I("Music Kit | The Verkkars, EZ4ENCE", "music", "restricted", 12500),
-  I("Music Kit | The Verkkars & n0thing, Flashbang Dance", "music", "restricted", 14000),
-  I("Sticker | High Heat", "sticker", "restricted", 1500),
-  I("Sticker | sdy (Holo) | Paris 2023", "sticker", "restricted", 3200),
-  I("Sticker | Apeks (Glitter) | Copenhagen 2024", "sticker", "restricted", 4500),
-  I("Sticker | Liquid (Holo) | 2020 RMR", "sticker", "classified", 8500),
-  I("Sticker | Boom (Gold) | 2020 RMR", "sticker", "covert", 18000),
-  I("Sticker | Rare Atom (Holo) | Shanghai 2024", "sticker", "classified", 22000),
-  I("Sticker | 3DMAX | Katowice 2014", "sticker", "classified", 85000),
-  I("Sticker | LGB eSports | Katowice 2014", "sticker", "classified", 140000),
-  I("Sticker | Fnatic | Katowice 2014", "sticker", "classified", 180000),
-  I("Sticker | HellRaisers | Katowice 2014", "sticker", "classified", 250000),
-  I("Sticker | Vox Eminor | Katowice 2014", "sticker", "classified", 450000),
-  I("Sticker | Team Dignitas | Katowice 2014", "sticker", "classified", 650000),
-  I("Sticker | Natus Vincere | Katowice 2014", "sticker", "covert", 950000),
-  I("Sticker | ESL Wolf (Foil) | Katowice 2014", "sticker", "covert", 1200000),
-  I("Sticker | ESL Skull (Foil) | Katowice 2014", "sticker", "covert", 1500000),
-  I("Sticker | Fnatic (Holo) | Katowice 2014", "sticker", "gold", 3200000),
-  I("Ground Rebel  | Elite Crew", "agent", "milspec", 5500),
-  I("Osiris | Elite Crew", "agent", "milspec", 6500),
-  I("Operator | FBI SWAT", "agent", "milspec", 7500),
-  I("3rd Commando Company | KSK", "agent", "restricted", 12000),
-  I("Seal Team 6 Soldier | NSWC SEAL", "agent", "restricted", 14500),
-  I("Michael Syfers  | FBI Sniper", "agent", "restricted", 16500),
-  I("The Elite Mr. Muhlik | Elite Crew", "agent", "classified", 22000),
-  I("Special Agent Ava | FBI", "agent", "classified", 28000),
-  I("Getaway Sally | The Professionals", "agent", "classified", 34000),
-  I("Vypa Sista of the Revolution | Guerrilla Warfare", "agent", "covert", 42000),
-  I("Sir Bloody Loudmouth Darryl | The Professionals", "agent", "covert", 48000),
-  I("Sir Bloody Miami Darryl | The Professionals", "agent", "covert", 55000),
-  I("Sir Bloody Silent Darryl | The Professionals", "agent", "covert", 62000),
-  I("Cmdr. Mae 'Dead Cold' Jamison | SWAT", "agent", "covert", 68000),
-  I("Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman", "agent", "covert", 75000),
-  I("'The Doctor' Romanov | Sabre", "agent", "covert", 85000),
-  I("Sir Bloody Skullhead Darryl | The Professionals", "agent", "covert", 95000),
-  I("Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman", "agent", "covert", 110000),
-  I("Sir Bloody Darryl Royale | The Professionals", "agent", "covert", 135000),
-  I("MAC-10 | Sakkaku", "smg", "restricted", 5500),
-  I("AK-47 | Slate", "rifle", "restricted", 6500),
-  I("USP-S | Cortex", "pistol", "restricted", 8500),
-  I("Five-SeveN | Angry Mob", "pistol", "restricted", 9500),
-  I("M4A4 | Spider Lily", "rifle", "restricted", 11000),
-  I("AWP | Atheris", "sniper", "restricted", 12500),
-  I("Glock-18 | Water Elemental", "pistol", "restricted", 14000),
-  I("M4A4 | Cyber Security", "rifle", "restricted", 16000),
-  I("AK-47 | Ice Coaled", "rifle", "restricted", 18000),
-  I("M4A1-S | Decimator", "rifle", "restricted", 19500),
-  I("AK-47 | Redline", "rifle", "classified", 25000),
-  I("M4A1-S | Cyrex", "rifle", "classified", 28000),
-  I("Desert Eagle | Kumicho Dragon", "pistol", "classified", 34000),
-  I("AK-47 | Frontside Misty", "rifle", "classified", 38000),
-  I("AWP | Neo-Noir", "sniper", "classified", 42000),
-  I("M4A4 | In Living Color", "rifle", "classified", 45000),
-  I("USP-S | Monster Mashup", "pistol", "classified", 48000),
-  I("Desert Eagle | Code Red", "pistol", "classified", 55000),
-  I("AK-47 | Legion of Anubis", "rifle", "classified", 62000),
-  I("AWP | Chromatic Aberration", "sniper", "classified", 68000),
-  I("M4A1-S | Golden Coil", "rifle", "classified", 72000),
-  I("AK-47 | Asiimov", "rifle", "covert", 75000),
-  I("Desert Eagle | Ocean Drive", "pistol", "covert", 85000),
-  I("AWP | Hyper Beast", "sniper", "covert", 88000),
-  I("AK-47 | The Empress", "rifle", "covert", 95000),
-  I("Desert Eagle | Printstream", "pistol", "covert", 110000),
-  I("M4A4 | The Emperor", "rifle", "covert", 130000),
-  I("AWP | Asiimov", "sniper", "covert", 135000),
-  I("AK-47 | Bloodsport", "rifle", "covert", 140000),
-  I("M4A4 | Temukau", "rifle", "covert", 145000),
-  I("USP-S | Printstream", "pistol", "covert", 145000),
-  I("AWP | Wildfire", "sniper", "covert", 160000),
-  I("USP-S | Kill Confirmed", "pistol", "covert", 190000),
-  I("AWP | Containment Breach", "sniper", "covert", 260000),
-  I("AK-47 | Fuel Injector", "rifle", "covert", 280000),
-  I("M4A1-S | Printstream", "rifle", "covert", 290000),
-  I("AWP | Oni Taiji", "sniper", "covert", 480000),
-  I("★ Navaja Knife | Crimson Web", "knife", "gold", 110000),
-  I("★ Hydra Gloves | Emerald", "gloves", "gold", 140000),
-  I("★ Gut Knife | Doppler", "knife", "gold", 160000),
-  I("★ Shadow Daggers | Fade", "knife", "gold", 190000),
-  I("★ Bowie Knife | Tiger Tooth", "knife", "gold", 240000),
-  I("★ Moto Gloves | Blood Pressure", "gloves", "gold", 260000),
-  I("★ Huntsman Knife | Lore", "knife", "gold", 320000),
-  I("★ Sport Gloves | Big Game", "gloves", "gold", 380000),
-  I("★ Specialist Gloves | Fade", "gloves", "gold", 550000),
-  I("★ Stiletto Knife | Doppler", "knife", "gold", 650000),
-  I("★ Hand Wraps | Cobalt Skulls", "gloves", "gold", 650000),
-  I("M4A1-S | Blue Phosphor", "rifle", "classified", 720000),
-  I("AWP | Lightning Strike", "sniper", "covert", 750000),
-  I("Desert Eagle | Blaze", "pistol", "restricted", 780000),
-  I("M4A1-S | Hot Rod", "rifle", "classified", 850000),
-  I("★ Talon Knife | Fade", "knife", "gold", 880000),
-  I("AK-47 | Vulcan", "rifle", "covert", 950000),
-  I("★ Skeleton Knife | Crimson Web", "knife", "gold", 950000),
-  I("M4A4 | Eye of Horus", "rifle", "covert", 950000),
-  I("★ Driver Gloves | King Snake", "gloves", "gold", 980000),
-  I("AWP | Fade", "sniper", "covert", 1100000),
-  I("★ Karambit | Tiger Tooth", "knife", "gold", 1150000),
-  I("★ Karambit | Lore", "knife", "gold", 1200000),
-  I("M4A4 | Poseidon", "rifle", "classified", 1200000),
-  I("M4A1-S | Imminent Danger", "rifle", "covert", 1300000),
-  I("★ Butterfly Knife | Slaughter", "knife", "gold", 1300000),
-  I("★ M9 Bayonet | Marble Fade", "knife", "gold", 1400000),
-  I("★ Moto Gloves | Spearmint", "gloves", "gold", 1400000),
-  I("★ Karambit | Marble Fade", "knife", "gold", 1450000),
-  I("M4A1-S | Knight", "rifle", "classified", 1500000),
-  I("Glock-18 | Fade", "pistol", "restricted", 1600000),
-  I("★ Karambit | Doppler", "knife", "gold", 1650000),
-  I("AK-47 | Fire Serpent", "rifle", "covert", 1800000),
-  I("★ Specialist Gloves | Crimson Kimono", "gloves", "gold", 1900000),
-  I("M4A1-S | Welcome to the Jungle", "rifle", "covert", 2100000),
-  I("AWP | Medusa", "sniper", "covert", 2200000),
-  I("AWP | Desert Hydra", "sniper", "covert", 2400000),
-  I("★ Sport Gloves | Vice", "gloves", "gold", 2800000),
-  I("AWP | The Prince", "sniper", "covert", 2900000),
-  I("★ Karambit | Fade", "knife", "gold", 3100000),
-  I("★ Butterfly Knife | Fade", "knife", "gold", 3400000),
-  I("★ Sport Gloves | Pandora's Box", "gloves", "gold", 3500000),
-  I("AK-47 | Gold Arabesque", "rifle", "covert", 3500000),
-  I("AUG | Akihabara Accept", "rifle", "covert", 4500000),
-  I("M4A4 | Howl", "rifle", "covert", 6500000),
-  I("AWP | Gungnir", "sniper", "covert", 8500000),
-  I("AWP | Dragon Lore", "sniper", "covert", 10000000),
-  I("AK-47 | Wild Lotus", "rifle", "covert", 12000000),
+  {
+    "id": "it1",
+    "name": "P250 | Sand Dune",
+    "weapon": "pistol",
+    "rarity": "consumer",
+    "value": 20
+  },
+  {
+    "id": "it2",
+    "name": "Nova | Predator",
+    "weapon": "heavy",
+    "rarity": "consumer",
+    "value": 35
+  },
+  {
+    "id": "it3",
+    "name": "FAMAS | Colony",
+    "weapon": "rifle",
+    "rarity": "consumer",
+    "value": 50
+  },
+  {
+    "id": "it4",
+    "name": "MP7 | Forest DDPAT",
+    "weapon": "smg",
+    "rarity": "consumer",
+    "value": 65
+  },
+  {
+    "id": "it5",
+    "name": "SG 553 | Army Sheen",
+    "weapon": "rifle",
+    "rarity": "consumer",
+    "value": 80
+  },
+  {
+    "id": "it6",
+    "name": "G3SG1 | Desert Storm",
+    "weapon": "sniper",
+    "rarity": "consumer",
+    "value": 95
+  },
+  {
+    "id": "it7",
+    "name": "MAG-7 | Storm",
+    "weapon": "heavy",
+    "rarity": "consumer",
+    "value": 120
+  },
+  {
+    "id": "it8",
+    "name": "PP-Bizon | Urban Dashed",
+    "weapon": "smg",
+    "rarity": "consumer",
+    "value": 150
+  },
+  {
+    "id": "it9",
+    "name": "M249 | Contrast Spray",
+    "weapon": "heavy",
+    "rarity": "consumer",
+    "value": 180
+  },
+  {
+    "id": "it10",
+    "name": "Galil AR | Sage Spray",
+    "weapon": "rifle",
+    "rarity": "consumer",
+    "value": 210
+  },
+  {
+    "id": "it11",
+    "name": "Dual Berettas | Colony",
+    "weapon": "pistol",
+    "rarity": "consumer",
+    "value": 240
+  },
+  {
+    "id": "it12",
+    "name": "MP9 | Storm",
+    "weapon": "smg",
+    "rarity": "industrial",
+    "value": 280
+  },
+  {
+    "id": "it13",
+    "name": "AUG | Sweeper",
+    "weapon": "rifle",
+    "rarity": "industrial",
+    "value": 350
+  },
+  {
+    "id": "it14",
+    "name": "SSG 08 | Mainframe 001",
+    "weapon": "sniper",
+    "rarity": "industrial",
+    "value": 450
+  },
+  {
+    "id": "it15",
+    "name": "Glock-18 | High Beam",
+    "weapon": "pistol",
+    "rarity": "industrial",
+    "value": 550
+  },
+  {
+    "id": "it16",
+    "name": "Glock-18 | Grinder",
+    "weapon": "pistol",
+    "rarity": "industrial",
+    "value": 750
+  },
+  {
+    "id": "it17",
+    "name": "Tec-9 | Bamboozle",
+    "weapon": "pistol",
+    "rarity": "industrial",
+    "value": 880
+  },
+  {
+    "id": "it18",
+    "name": "UMP-45 | Urban DDPAT",
+    "weapon": "smg",
+    "rarity": "milspec",
+    "value": 1200
+  },
+  {
+    "id": "it19",
+    "name": "MAC-10 | Silver",
+    "weapon": "smg",
+    "rarity": "industrial",
+    "value": 1400
+  },
+  {
+    "id": "it20",
+    "name": "Five-SeveN | Case Hardened",
+    "weapon": "pistol",
+    "rarity": "industrial",
+    "value": 1600
+  },
+  {
+    "id": "it21",
+    "name": "Desert Eagle | Mudder",
+    "weapon": "pistol",
+    "rarity": "industrial",
+    "value": 1800
+  },
+  {
+    "id": "it22",
+    "name": "MAC-10 | Curse",
+    "weapon": "smg",
+    "rarity": "milspec",
+    "value": 2200
+  },
+  {
+    "id": "it23",
+    "name": "AK-47 | Safari Mesh",
+    "weapon": "rifle",
+    "rarity": "milspec",
+    "value": 2500
+  },
+  {
+    "id": "it24",
+    "name": "P90 | Grim",
+    "weapon": "smg",
+    "rarity": "milspec",
+    "value": 2800
+  },
+  {
+    "id": "it25",
+    "name": "Desert Eagle | Light Rail",
+    "weapon": "pistol",
+    "rarity": "milspec",
+    "value": 3500
+  },
+  {
+    "id": "it26",
+    "name": "M4A1-S | Night Terror",
+    "weapon": "rifle",
+    "rarity": "milspec",
+    "value": 4200
+  },
+  {
+    "id": "it27",
+    "name": "P250 | Valence",
+    "weapon": "pistol",
+    "rarity": "milspec",
+    "value": 4800
+  },
+  {
+    "id": "it28",
+    "name": "Music Kit | ALRT, DOPAMINE HIT",
+    "weapon": "music",
+    "rarity": "milspec",
+    "value": 3500
+  },
+  {
+    "id": "it29",
+    "name": "Music Kit | bbno$, u mad!",
+    "weapon": "music",
+    "rarity": "milspec",
+    "value": 4800
+  },
+  {
+    "id": "it30",
+    "name": "Music Kit | Knock2, dashstar*",
+    "weapon": "music",
+    "rarity": "milspec",
+    "value": 5500
+  },
+  {
+    "id": "it31",
+    "name": "Music Kit | Denzel Curry, ULTIMATE",
+    "weapon": "music",
+    "rarity": "milspec",
+    "value": 6500
+  },
+  {
+    "id": "it32",
+    "name": "Music Kit | AWOLNATION, I Am",
+    "weapon": "music",
+    "rarity": "milspec",
+    "value": 8500
+  },
+  {
+    "id": "it33",
+    "name": "Music Kit | Mord Fustang, Diamonds",
+    "weapon": "music",
+    "rarity": "milspec",
+    "value": 9500
+  },
+  {
+    "id": "it34",
+    "name": "Music Kit | The Verkkars, EZ4ENCE",
+    "weapon": "music",
+    "rarity": "restricted",
+    "value": 12500
+  },
+  {
+    "id": "it35",
+    "name": "Music Kit | The Verkkars & n0thing, Flashbang Dance",
+    "weapon": "music",
+    "rarity": "restricted",
+    "value": 14000
+  },
+  {
+    "id": "it36",
+    "name": "Sticker | High Heat",
+    "weapon": "sticker",
+    "rarity": "restricted",
+    "value": 1500
+  },
+  {
+    "id": "it37",
+    "name": "Sticker | sdy (Holo) | Paris 2023",
+    "weapon": "sticker",
+    "rarity": "restricted",
+    "value": 3200
+  },
+  {
+    "id": "it38",
+    "name": "Sticker | Apeks (Glitter) | Copenhagen 2024",
+    "weapon": "sticker",
+    "rarity": "restricted",
+    "value": 4500
+  },
+  {
+    "id": "it39",
+    "name": "Sticker | Liquid (Holo) | 2020 RMR",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 8500
+  },
+  {
+    "id": "it40",
+    "name": "Sticker | Boom (Gold) | 2020 RMR",
+    "weapon": "sticker",
+    "rarity": "covert",
+    "value": 18000
+  },
+  {
+    "id": "it41",
+    "name": "Sticker | Rare Atom (Holo) | Shanghai 2024",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 22000
+  },
+  {
+    "id": "it42",
+    "name": "Sticker | 3DMAX | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 85000
+  },
+  {
+    "id": "it43",
+    "name": "Sticker | LGB eSports | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 140000
+  },
+  {
+    "id": "it44",
+    "name": "Sticker | Fnatic | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 180000
+  },
+  {
+    "id": "it45",
+    "name": "Sticker | HellRaisers | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 250000
+  },
+  {
+    "id": "it46",
+    "name": "Sticker | Vox Eminor | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 450000
+  },
+  {
+    "id": "it47",
+    "name": "Sticker | Team Dignitas | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "classified",
+    "value": 650000
+  },
+  {
+    "id": "it48",
+    "name": "Sticker | Natus Vincere | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "covert",
+    "value": 950000
+  },
+  {
+    "id": "it49",
+    "name": "Sticker | ESL Wolf (Foil) | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "covert",
+    "value": 1200000
+  },
+  {
+    "id": "it50",
+    "name": "Sticker | ESL Skull (Foil) | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "covert",
+    "value": 1500000
+  },
+  {
+    "id": "it51",
+    "name": "Sticker | Fnatic (Holo) | Katowice 2014",
+    "weapon": "sticker",
+    "rarity": "gold",
+    "value": 3200000
+  },
+  {
+    "id": "it52",
+    "name": "Ground Rebel  | Elite Crew",
+    "weapon": "agent",
+    "rarity": "milspec",
+    "value": 5500
+  },
+  {
+    "id": "it53",
+    "name": "Osiris | Elite Crew",
+    "weapon": "agent",
+    "rarity": "milspec",
+    "value": 6500
+  },
+  {
+    "id": "it54",
+    "name": "Operator | FBI SWAT",
+    "weapon": "agent",
+    "rarity": "milspec",
+    "value": 7500
+  },
+  {
+    "id": "it55",
+    "name": "3rd Commando Company | KSK",
+    "weapon": "agent",
+    "rarity": "restricted",
+    "value": 12000
+  },
+  {
+    "id": "it56",
+    "name": "Seal Team 6 Soldier | NSWC SEAL",
+    "weapon": "agent",
+    "rarity": "restricted",
+    "value": 14500
+  },
+  {
+    "id": "it57",
+    "name": "Michael Syfers  | FBI Sniper",
+    "weapon": "agent",
+    "rarity": "restricted",
+    "value": 16500
+  },
+  {
+    "id": "it58",
+    "name": "The Elite Mr. Muhlik | Elite Crew",
+    "weapon": "agent",
+    "rarity": "classified",
+    "value": 22000
+  },
+  {
+    "id": "it59",
+    "name": "Special Agent Ava | FBI",
+    "weapon": "agent",
+    "rarity": "classified",
+    "value": 28000
+  },
+  {
+    "id": "it60",
+    "name": "Getaway Sally | The Professionals",
+    "weapon": "agent",
+    "rarity": "classified",
+    "value": 34000
+  },
+  {
+    "id": "it61",
+    "name": "Vypa Sista of the Revolution | Guerrilla Warfare",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 42000
+  },
+  {
+    "id": "it62",
+    "name": "Sir Bloody Loudmouth Darryl | The Professionals",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 48000
+  },
+  {
+    "id": "it63",
+    "name": "Sir Bloody Miami Darryl | The Professionals",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 55000
+  },
+  {
+    "id": "it64",
+    "name": "Sir Bloody Silent Darryl | The Professionals",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 62000
+  },
+  {
+    "id": "it65",
+    "name": "Cmdr. Mae 'Dead Cold' Jamison | SWAT",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 68000
+  },
+  {
+    "id": "it66",
+    "name": "Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 75000
+  },
+  {
+    "id": "it67",
+    "name": "'The Doctor' Romanov | Sabre",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 85000
+  },
+  {
+    "id": "it68",
+    "name": "Sir Bloody Skullhead Darryl | The Professionals",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 95000
+  },
+  {
+    "id": "it69",
+    "name": "Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 110000
+  },
+  {
+    "id": "it70",
+    "name": "Sir Bloody Darryl Royale | The Professionals",
+    "weapon": "agent",
+    "rarity": "covert",
+    "value": 135000
+  },
+  {
+    "id": "it71",
+    "name": "MAC-10 | Sakkaku",
+    "weapon": "smg",
+    "rarity": "restricted",
+    "value": 5500
+  },
+  {
+    "id": "it72",
+    "name": "AK-47 | Slate",
+    "weapon": "rifle",
+    "rarity": "restricted",
+    "value": 6500
+  },
+  {
+    "id": "it73",
+    "name": "USP-S | Cortex",
+    "weapon": "pistol",
+    "rarity": "restricted",
+    "value": 8500
+  },
+  {
+    "id": "it74",
+    "name": "Five-SeveN | Angry Mob",
+    "weapon": "pistol",
+    "rarity": "restricted",
+    "value": 9500
+  },
+  {
+    "id": "it75",
+    "name": "M4A4 | Spider Lily",
+    "weapon": "rifle",
+    "rarity": "restricted",
+    "value": 11000
+  },
+  {
+    "id": "it76",
+    "name": "AWP | Atheris",
+    "weapon": "sniper",
+    "rarity": "restricted",
+    "value": 12500
+  },
+  {
+    "id": "it77",
+    "name": "Glock-18 | Water Elemental",
+    "weapon": "pistol",
+    "rarity": "restricted",
+    "value": 14000
+  },
+  {
+    "id": "it78",
+    "name": "M4A4 | Cyber Security",
+    "weapon": "rifle",
+    "rarity": "restricted",
+    "value": 16000
+  },
+  {
+    "id": "it79",
+    "name": "AK-47 | Ice Coaled",
+    "weapon": "rifle",
+    "rarity": "restricted",
+    "value": 18000
+  },
+  {
+    "id": "it80",
+    "name": "M4A1-S | Decimator",
+    "weapon": "rifle",
+    "rarity": "restricted",
+    "value": 19500
+  },
+  {
+    "id": "it81",
+    "name": "AK-47 | Redline",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 25000
+  },
+  {
+    "id": "it82",
+    "name": "M4A1-S | Cyrex",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 28000
+  },
+  {
+    "id": "it83",
+    "name": "Desert Eagle | Kumicho Dragon",
+    "weapon": "pistol",
+    "rarity": "classified",
+    "value": 34000
+  },
+  {
+    "id": "it84",
+    "name": "AK-47 | Frontside Misty",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 38000
+  },
+  {
+    "id": "it85",
+    "name": "AWP | Neo-Noir",
+    "weapon": "sniper",
+    "rarity": "classified",
+    "value": 42000
+  },
+  {
+    "id": "it86",
+    "name": "M4A4 | In Living Color",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 45000
+  },
+  {
+    "id": "it87",
+    "name": "USP-S | Monster Mashup",
+    "weapon": "pistol",
+    "rarity": "classified",
+    "value": 48000
+  },
+  {
+    "id": "it88",
+    "name": "Desert Eagle | Code Red",
+    "weapon": "pistol",
+    "rarity": "classified",
+    "value": 55000
+  },
+  {
+    "id": "it89",
+    "name": "AK-47 | Legion of Anubis",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 62000
+  },
+  {
+    "id": "it90",
+    "name": "AWP | Chromatic Aberration",
+    "weapon": "sniper",
+    "rarity": "classified",
+    "value": 68000
+  },
+  {
+    "id": "it91",
+    "name": "M4A1-S | Golden Coil",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 72000
+  },
+  {
+    "id": "it92",
+    "name": "AK-47 | Asiimov",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 75000
+  },
+  {
+    "id": "it93",
+    "name": "Desert Eagle | Ocean Drive",
+    "weapon": "pistol",
+    "rarity": "covert",
+    "value": 85000
+  },
+  {
+    "id": "it94",
+    "name": "AWP | Hyper Beast",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 88000
+  },
+  {
+    "id": "it95",
+    "name": "AK-47 | The Empress",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 95000
+  },
+  {
+    "id": "it96",
+    "name": "Desert Eagle | Printstream",
+    "weapon": "pistol",
+    "rarity": "covert",
+    "value": 110000
+  },
+  {
+    "id": "it97",
+    "name": "M4A4 | The Emperor",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 130000
+  },
+  {
+    "id": "it98",
+    "name": "AWP | Asiimov",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 135000
+  },
+  {
+    "id": "it99",
+    "name": "AK-47 | Bloodsport",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 140000
+  },
+  {
+    "id": "it100",
+    "name": "M4A4 | Temukau",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 145000
+  },
+  {
+    "id": "it101",
+    "name": "USP-S | Printstream",
+    "weapon": "pistol",
+    "rarity": "covert",
+    "value": 145000
+  },
+  {
+    "id": "it102",
+    "name": "AWP | Wildfire",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 160000
+  },
+  {
+    "id": "it103",
+    "name": "USP-S | Kill Confirmed",
+    "weapon": "pistol",
+    "rarity": "covert",
+    "value": 190000
+  },
+  {
+    "id": "it104",
+    "name": "AWP | Containment Breach",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 260000
+  },
+  {
+    "id": "it105",
+    "name": "AK-47 | Fuel Injector",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 280000
+  },
+  {
+    "id": "it106",
+    "name": "M4A1-S | Printstream",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 290000
+  },
+  {
+    "id": "it107",
+    "name": "AWP | Oni Taiji",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 480000
+  },
+  {
+    "id": "it108",
+    "name": "★ Navaja Knife | Crimson Web",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 110000
+  },
+  {
+    "id": "it109",
+    "name": "★ Hydra Gloves | Emerald",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 140000
+  },
+  {
+    "id": "it110",
+    "name": "★ Gut Knife | Doppler",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 160000
+  },
+  {
+    "id": "it111",
+    "name": "★ Shadow Daggers | Fade",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 190000
+  },
+  {
+    "id": "it112",
+    "name": "★ Bowie Knife | Tiger Tooth",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 240000
+  },
+  {
+    "id": "it113",
+    "name": "★ Moto Gloves | Blood Pressure",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 260000
+  },
+  {
+    "id": "it114",
+    "name": "★ Huntsman Knife | Lore",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 320000
+  },
+  {
+    "id": "it115",
+    "name": "★ Sport Gloves | Big Game",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 380000
+  },
+  {
+    "id": "it116",
+    "name": "★ Specialist Gloves | Fade",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 550000
+  },
+  {
+    "id": "it117",
+    "name": "★ Stiletto Knife | Doppler",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 650000
+  },
+  {
+    "id": "it118",
+    "name": "★ Hand Wraps | Cobalt Skulls",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 650000
+  },
+  {
+    "id": "it119",
+    "name": "M4A1-S | Blue Phosphor",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 720000
+  },
+  {
+    "id": "it120",
+    "name": "AWP | Lightning Strike",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 750000
+  },
+  {
+    "id": "it121",
+    "name": "Desert Eagle | Blaze",
+    "weapon": "pistol",
+    "rarity": "restricted",
+    "value": 780000
+  },
+  {
+    "id": "it122",
+    "name": "M4A1-S | Hot Rod",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 850000
+  },
+  {
+    "id": "it123",
+    "name": "★ Talon Knife | Fade",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 880000
+  },
+  {
+    "id": "it124",
+    "name": "AK-47 | Vulcan",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 950000
+  },
+  {
+    "id": "it125",
+    "name": "★ Skeleton Knife | Crimson Web",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 950000
+  },
+  {
+    "id": "it126",
+    "name": "M4A4 | Eye of Horus",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 950000
+  },
+  {
+    "id": "it127",
+    "name": "★ Driver Gloves | King Snake",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 980000
+  },
+  {
+    "id": "it128",
+    "name": "AWP | Fade",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 1100000
+  },
+  {
+    "id": "it129",
+    "name": "★ Karambit | Tiger Tooth",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 1150000
+  },
+  {
+    "id": "it130",
+    "name": "★ Karambit | Lore",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 1200000
+  },
+  {
+    "id": "it131",
+    "name": "M4A4 | Poseidon",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 1200000
+  },
+  {
+    "id": "it132",
+    "name": "M4A1-S | Imminent Danger",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 1300000
+  },
+  {
+    "id": "it133",
+    "name": "★ Butterfly Knife | Slaughter",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 1300000
+  },
+  {
+    "id": "it134",
+    "name": "★ M9 Bayonet | Marble Fade",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 1400000
+  },
+  {
+    "id": "it135",
+    "name": "★ Moto Gloves | Spearmint",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 1400000
+  },
+  {
+    "id": "it136",
+    "name": "★ Karambit | Marble Fade",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 1450000
+  },
+  {
+    "id": "it137",
+    "name": "M4A1-S | Knight",
+    "weapon": "rifle",
+    "rarity": "classified",
+    "value": 1500000
+  },
+  {
+    "id": "it138",
+    "name": "Glock-18 | Fade",
+    "weapon": "pistol",
+    "rarity": "restricted",
+    "value": 1600000
+  },
+  {
+    "id": "it139",
+    "name": "★ Karambit | Doppler",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 1650000
+  },
+  {
+    "id": "it140",
+    "name": "AK-47 | Fire Serpent",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 1800000
+  },
+  {
+    "id": "it141",
+    "name": "★ Specialist Gloves | Crimson Kimono",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 1900000
+  },
+  {
+    "id": "it142",
+    "name": "M4A1-S | Welcome to the Jungle",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 2100000
+  },
+  {
+    "id": "it143",
+    "name": "AWP | Medusa",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 2200000
+  },
+  {
+    "id": "it144",
+    "name": "AWP | Desert Hydra",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 2400000
+  },
+  {
+    "id": "it145",
+    "name": "★ Sport Gloves | Vice",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 2800000
+  },
+  {
+    "id": "it146",
+    "name": "AWP | The Prince",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 2900000
+  },
+  {
+    "id": "it147",
+    "name": "★ Karambit | Fade",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 3100000
+  },
+  {
+    "id": "it148",
+    "name": "★ Butterfly Knife | Fade",
+    "weapon": "knife",
+    "rarity": "gold",
+    "value": 3400000
+  },
+  {
+    "id": "it149",
+    "name": "★ Sport Gloves | Pandora's Box",
+    "weapon": "gloves",
+    "rarity": "gold",
+    "value": 3500000
+  },
+  {
+    "id": "it150",
+    "name": "AK-47 | Gold Arabesque",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 3500000
+  },
+  {
+    "id": "it151",
+    "name": "AUG | Akihabara Accept",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 4500000
+  },
+  {
+    "id": "it152",
+    "name": "M4A4 | Howl",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 6500000
+  },
+  {
+    "id": "it153",
+    "name": "AWP | Gungnir",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 8500000
+  },
+  {
+    "id": "it154",
+    "name": "AWP | Dragon Lore",
+    "weapon": "sniper",
+    "rarity": "covert",
+    "value": 10000000
+  },
+  {
+    "id": "it155",
+    "name": "AK-47 | Wild Lotus",
+    "weapon": "rifle",
+    "rarity": "covert",
+    "value": 12000000
+  }
 ];
-
-// Attach real Steam image URLs
-const skinImages = require('./skin-images.json');
-let mappedCount = 0;
-ITEMS.forEach(it => {
-  if (skinImages[it.name]) {
-    it.img = skinImages[it.name];
-    mappedCount++;
-  }
-});
-console.log(`[catalog] real skin images loaded: ${mappedCount}/${ITEMS.length}`);
-
-const byId = Object.fromEntries(ITEMS.map(i => [i.id, i]));
-const byName = Object.fromEntries(ITEMS.map(i => [i.name, i]));
-const getItemId = name => (byName[name] && byName[name].id) || ITEMS[0].id;
-
-// Safe Profit-Protecting Case Constructor
-function createCase({ id, name, tier, price, fillers, jackpots }) {
-  const allItemNames = [...fillers, ...jackpots];
-  const items = allItemNames.map(getItemId);
-  
-  // Microscopic jackpot odds (0.00005% - 0.0001%) so winning over price is near-impossible
-  const jackpotWeight = jackpots.length ? 0.0001 / jackpots.length : 0;
-  const fillerTotalWeight = 1.0 - (jackpotWeight * jackpots.length);
-  
-  const w = [];
-  const fCount = fillers.length;
-  let sumF = 0;
-  for (let i = 0; i < fCount; i++) sumF += (fCount - i);
-  for (let i = 0; i < fCount; i++) {
-    w.push(((fCount - i) / sumF) * fillerTotalWeight);
-  }
-  for (let i = 0; i < jackpots.length; i++) {
-    w.push(jackpotWeight);
-  }
-  
-  return { id, name, tier, price, items, w };
-}
-
-const RAW_CASES = [
+const byName = Object.fromEntries(ITEMS.map(it => [it.name, it]));
+const byId = Object.fromEntries(ITEMS.map(it => [it.id, it]));
+const CASES = [
   {
     "id": "dust_10c",
     "name": "10¢ Dust & Sand",
     "tier": "starter",
     "price": 100,
-    "fillers": [
-      "P250 | Sand Dune",
-      "Nova | Predator"
+    "items": [
+      "it1",
+      "it2",
+      "it4",
+      "it5",
+      "it6",
+      "it7",
+      "it8",
+      "it9",
+      "it10",
+      "it11",
+      "it12"
     ],
-    "jackpots": [
-      "FAMAS | Colony",
-      "MP7 | Forest DDPAT",
-      "SG 553 | Army Sheen",
-      "Glock-18 | Grinder"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -260,18 +1163,31 @@ const RAW_CASES = [
     "name": "25¢ Budget Luck",
     "tier": "starter",
     "price": 250,
-    "fillers": [
-      "P250 | Sand Dune",
-      "Nova | Predator",
-      "FAMAS | Colony",
-      "MP7 | Forest DDPAT",
-      "SG 553 | Army Sheen",
-      "G3SG1 | Desert Storm"
+    "items": [
+      "it1",
+      "it4",
+      "it6",
+      "it9",
+      "it11",
+      "it12",
+      "it13",
+      "it14",
+      "it15",
+      "it16",
+      "it17"
     ],
-    "jackpots": [
-      "PP-Bizon | Urban Dashed",
-      "Glock-18 | Grinder",
-      "AK-47 | Slate"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -279,22 +1195,31 @@ const RAW_CASES = [
     "name": "50¢ Budget Luck",
     "tier": "starter",
     "price": 500,
-    "fillers": [
-      "P250 | Sand Dune",
-      "Nova | Predator",
-      "FAMAS | Colony",
-      "MP7 | Forest DDPAT",
-      "SG 553 | Army Sheen",
-      "G3SG1 | Desert Storm",
-      "MAG-7 | Storm",
-      "Dual Berettas | Colony",
-      "MP9 | Storm"
+    "items": [
+      "it1",
+      "it4",
+      "it8",
+      "it11",
+      "it14",
+      "it15",
+      "it16",
+      "it17",
+      "it18",
+      "it19",
+      "it36"
     ],
-    "jackpots": [
-      "AUG | Sweeper",
-      "Glock-18 | Grinder",
-      "AK-47 | Slate",
-      "USP-S | Cortex"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -302,20 +1227,31 @@ const RAW_CASES = [
     "name": "75¢ Thrill Rush",
     "tier": "starter",
     "price": 750,
-    "fillers": [
-      "Nova | Predator",
-      "FAMAS | Colony",
-      "MP7 | Forest DDPAT",
-      "SG 553 | Army Sheen",
-      "MAG-7 | Storm",
-      "MP9 | Storm",
-      "AUG | Sweeper",
-      "SSG 08 | Mainframe 001"
+    "items": [
+      "it1",
+      "it5",
+      "it8",
+      "it12",
+      "it15",
+      "it16",
+      "it17",
+      "it18",
+      "it19",
+      "it36",
+      "it20"
     ],
-    "jackpots": [
-      "Glock-18 | Grinder",
-      "AK-47 | Slate",
-      "USP-S | Cortex"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -323,22 +1259,31 @@ const RAW_CASES = [
     "name": "$1 Starter Box",
     "tier": "bronze",
     "price": 1000,
-    "fillers": [
-      "FAMAS | Colony",
-      "MP7 | Forest DDPAT",
-      "SG 553 | Army Sheen",
-      "MAG-7 | Storm",
-      "MP9 | Storm",
-      "AUG | Sweeper",
-      "SSG 08 | Mainframe 001",
-      "Glock-18 | High Beam",
-      "Glock-18 | Grinder"
+    "items": [
+      "it1",
+      "it5",
+      "it9",
+      "it13",
+      "it17",
+      "it18",
+      "it19",
+      "it36",
+      "it20",
+      "it21",
+      "it22"
     ],
-    "jackpots": [
-      "UMP-45 | Urban DDPAT",
-      "AK-47 | Slate",
-      "AK-47 | Redline",
-      "★ Gut Knife | Doppler"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -346,21 +1291,31 @@ const RAW_CASES = [
     "name": "$1.50 Mil-Spec Rain",
     "tier": "bronze",
     "price": 1500,
-    "fillers": [
-      "MP9 | Storm",
-      "AUG | Sweeper",
-      "SSG 08 | Mainframe 001",
-      "Glock-18 | High Beam",
-      "Glock-18 | Grinder",
-      "Tec-9 | Bamboozle",
-      "UMP-45 | Urban DDPAT",
-      "MAC-10 | Silver"
+    "items": [
+      "it1",
+      "it6",
+      "it10",
+      "it15",
+      "it19",
+      "it36",
+      "it20",
+      "it21",
+      "it22",
+      "it23",
+      "it24"
     ],
-    "jackpots": [
-      "Five-SeveN | Case Hardened",
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "M4A1-S | Cyrex"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -368,21 +1323,31 @@ const RAW_CASES = [
     "name": "$2 Industrial Drop",
     "tier": "bronze",
     "price": 2000,
-    "fillers": [
-      "SSG 08 | Mainframe 001",
-      "Glock-18 | High Beam",
-      "Glock-18 | Grinder",
-      "Tec-9 | Bamboozle",
-      "UMP-45 | Urban DDPAT",
-      "MAC-10 | Silver",
-      "Five-SeveN | Case Hardened",
-      "Desert Eagle | Mudder"
+    "items": [
+      "it1",
+      "it6",
+      "it12",
+      "it17",
+      "it21",
+      "it22",
+      "it23",
+      "it24",
+      "it37",
+      "it25",
+      "it28"
     ],
-    "jackpots": [
-      "MAC-10 | Curse",
-      "AK-47 | Slate",
-      "AK-47 | Redline",
-      "Desert Eagle | Code Red"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -390,21 +1355,31 @@ const RAW_CASES = [
     "name": "Bronze Blitz",
     "tier": "bronze",
     "price": 2500,
-    "fillers": [
-      "Glock-18 | Grinder",
-      "Tec-9 | Bamboozle",
-      "UMP-45 | Urban DDPAT",
-      "MAC-10 | Silver",
-      "Five-SeveN | Case Hardened",
-      "Desert Eagle | Mudder",
-      "MAC-10 | Curse"
+    "items": [
+      "it1",
+      "it7",
+      "it12",
+      "it18",
+      "it22",
+      "it23",
+      "it24",
+      "it37",
+      "it25",
+      "it28",
+      "it26"
     ],
-    "jackpots": [
-      "AK-47 | Safari Mesh",
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "AK-47 | Redline",
-      "★ Shadow Daggers | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -412,19 +1387,31 @@ const RAW_CASES = [
     "name": "$3 Danger Zone",
     "tier": "silver",
     "price": 3000,
-    "fillers": [
-      "UMP-45 | Urban DDPAT",
-      "MAC-10 | Silver",
-      "Five-SeveN | Case Hardened",
-      "Desert Eagle | Mudder",
-      "MAC-10 | Curse",
-      "AK-47 | Safari Mesh",
-      "P90 | Grim"
+    "items": [
+      "it1",
+      "it7",
+      "it13",
+      "it19",
+      "it24",
+      "it37",
+      "it25",
+      "it28",
+      "it26",
+      "it38",
+      "it27"
     ],
-    "jackpots": [
-      "Desert Eagle | Light Rail",
-      "AK-47 | Slate",
-      "AWP | Atheris"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -432,18 +1419,31 @@ const RAW_CASES = [
     "name": "$4 Shadow Case",
     "tier": "silver",
     "price": 4000,
-    "fillers": [
-      "Desert Eagle | Mudder",
-      "MAC-10 | Curse",
-      "AK-47 | Safari Mesh",
-      "P90 | Grim",
-      "Desert Eagle | Light Rail"
+    "items": [
+      "it1",
+      "it8",
+      "it15",
+      "it20",
+      "it28",
+      "it26",
+      "it38",
+      "it27",
+      "it29",
+      "it30",
+      "it52"
     ],
-    "jackpots": [
-      "M4A1-S | Night Terror",
-      "P250 | Valence",
-      "AK-47 | Slate",
-      "★ Shadow Daggers | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -451,20 +1451,31 @@ const RAW_CASES = [
     "name": "Silver Storm",
     "tier": "silver",
     "price": 5000,
-    "fillers": [
-      "MAC-10 | Curse",
-      "AK-47 | Safari Mesh",
-      "P90 | Grim",
-      "Desert Eagle | Light Rail",
-      "M4A1-S | Night Terror",
-      "P250 | Valence"
+    "items": [
+      "it1",
+      "it9",
+      "it17",
+      "it23",
+      "it29",
+      "it30",
+      "it52",
+      "it71",
+      "it31",
+      "it53",
+      "it72"
     ],
-    "jackpots": [
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "M4A4 | Spider Lily",
-      "AK-47 | Redline",
-      "★ Bowie Knife | Tiger Tooth"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -472,18 +1483,31 @@ const RAW_CASES = [
     "name": "$6 Wildfire Scout",
     "tier": "silver",
     "price": 6000,
-    "fillers": [
-      "AK-47 | Safari Mesh",
-      "Desert Eagle | Light Rail",
-      "M4A1-S | Night Terror",
-      "P250 | Valence",
-      "MAC-10 | Sakkaku"
+    "items": [
+      "it1",
+      "it10",
+      "it18",
+      "it25",
+      "it71",
+      "it31",
+      "it53",
+      "it72",
+      "it54",
+      "it32",
+      "it39"
     ],
-    "jackpots": [
-      "AK-47 | Slate",
-      "AWP | Atheris",
-      "AWP | Neo-Noir",
-      "AWP | Wildfire"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -491,36 +1515,63 @@ const RAW_CASES = [
     "name": "$7.50 SMG Frenzy",
     "tier": "silver",
     "price": 7500,
-    "fillers": [
-      "UMP-45 | Urban DDPAT",
-      "MAC-10 | Silver",
-      "MAC-10 | Curse",
-      "P90 | Grim",
-      "MAC-10 | Sakkaku"
+    "items": [
+      "it1",
+      "it10",
+      "it36",
+      "it26",
+      "it72",
+      "it54",
+      "it32",
+      "it39",
+      "it73",
+      "it33",
+      "it74"
     ],
-    "jackpots": [
-      "USP-S | Cortex",
-      "M4A1-S | Decimator",
-      "AK-47 | Redline",
-      "★ Hydra Gloves | Emerald"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "music",
+    "id": "music_8usd",
     "name": "CS2 Music Box",
-    "tier": "platinum",
+    "tier": "silver",
     "price": 8000,
-    "fillers": [
-      "Music Kit | ALRT, DOPAMINE HIT",
-      "Music Kit | bbno$, u mad!",
-      "Music Kit | Knock2, dashstar*",
-      "Music Kit | Denzel Curry, ULTIMATE"
+    "items": [
+      "it1",
+      "it11",
+      "it36",
+      "it38",
+      "it54",
+      "it32",
+      "it39",
+      "it73",
+      "it33",
+      "it74",
+      "it75"
     ],
-    "jackpots": [
-      "Music Kit | AWOLNATION, I Am",
-      "Music Kit | Mord Fustang, Diamonds",
-      "Music Kit | The Verkkars, EZ4ENCE",
-      "Music Kit | The Verkkars & n0thing, Flashbang Dance"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -528,20 +1579,31 @@ const RAW_CASES = [
     "name": "Golden Rush",
     "tier": "gold",
     "price": 10000,
-    "fillers": [
-      "Desert Eagle | Light Rail",
-      "M4A1-S | Night Terror",
-      "P250 | Valence",
-      "MAC-10 | Sakkaku",
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "Five-SeveN | Angry Mob"
+    "items": [
+      "it1",
+      "it12",
+      "it22",
+      "it30",
+      "it74",
+      "it75",
+      "it55",
+      "it34",
+      "it76",
+      "it35",
+      "it77"
     ],
-    "jackpots": [
-      "M4A4 | Spider Lily",
-      "AWP | Atheris",
-      "AK-47 | Redline",
-      "★ Huntsman Knife | Lore"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -549,44 +1611,63 @@ const RAW_CASES = [
     "name": "$12 Redline Vault",
     "tier": "gold",
     "price": 12000,
-    "fillers": [
-      "AK-47 | Safari Mesh",
-      "M4A1-S | Night Terror",
-      "MAC-10 | Sakkaku",
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "M4A4 | Spider Lily"
+    "items": [
+      "it1",
+      "it12",
+      "it22",
+      "it52",
+      "it75",
+      "it55",
+      "it34",
+      "it76",
+      "it35",
+      "it77",
+      "it56"
     ],
-    "jackpots": [
-      "AWP | Atheris",
-      "AK-47 | Ice Coaled",
-      "AK-47 | Redline",
-      "AK-47 | Bloodsport",
-      "AK-47 | Fire Serpent"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "pistols",
     "name": "One Tap Pistols",
-    "tier": "pistols",
+    "tier": "gold",
     "price": 15000,
-    "fillers": [
-      "P250 | Sand Dune",
-      "Glock-18 | High Beam",
-      "Five-SeveN | Case Hardened",
-      "Desert Eagle | Light Rail",
-      "P250 | Valence",
-      "USP-S | Cortex",
-      "Five-SeveN | Angry Mob",
-      "Glock-18 | Water Elemental"
+    "items": [
+      "it1",
+      "it14",
+      "it37",
+      "it54",
+      "it56",
+      "it78",
+      "it57",
+      "it40",
+      "it79",
+      "it80",
+      "it41"
     ],
-    "jackpots": [
-      "Desert Eagle | Kumicho Dragon",
-      "Desert Eagle | Code Red",
-      "Desert Eagle | Printstream",
-      "USP-S | Kill Confirmed",
-      "Desert Eagle | Blaze",
-      "Glock-18 | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -594,172 +1675,255 @@ const RAW_CASES = [
     "name": "$18 Heavy Assault",
     "tier": "gold",
     "price": 18000,
-    "fillers": [
-      "MAG-7 | Storm",
-      "M249 | Contrast Spray",
-      "Nova | Predator",
-      "M4A4 | Spider Lily",
-      "AWP | Atheris",
-      "M4A4 | Cyber Security"
+    "items": [
+      "it1",
+      "it14",
+      "it25",
+      "it32",
+      "it57",
+      "it40",
+      "it79",
+      "it80",
+      "it41",
+      "it58",
+      "it81"
     ],
-    "jackpots": [
-      "AK-47 | Ice Coaled",
-      "AK-47 | Redline",
-      "AK-47 | Asiimov",
-      "AK-47 | The Empress"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "classified_20usd",
     "name": "$20 Classified Royale",
-    "tier": "platinum",
+    "tier": "gold",
     "price": 20000,
-    "fillers": [
-      "P250 | Valence",
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "Five-SeveN | Angry Mob",
-      "M4A4 | Spider Lily",
-      "AWP | Atheris",
-      "Glock-18 | Water Elemental",
-      "M4A4 | Cyber Security",
-      "AK-47 | Ice Coaled",
-      "M4A1-S | Decimator"
+    "items": [
+      "it1",
+      "it15",
+      "it26",
+      "it73",
+      "it80",
+      "it41",
+      "it58",
+      "it81",
+      "it59",
+      "it82",
+      "it60"
     ],
-    "jackpots": [
-      "AK-47 | Redline",
-      "M4A1-S | Cyrex",
-      "Desert Eagle | Kumicho Dragon",
-      "AWP | Neo-Noir",
-      "M4A4 | In Living Color"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "agents",
+    "id": "agents_25usd",
     "name": "Operation Agents",
-    "tier": "elite",
+    "tier": "gold",
     "price": 25000,
-    "fillers": [
-      "Ground Rebel  | Elite Crew",
-      "Osiris | Elite Crew",
-      "Operator | FBI SWAT",
-      "3rd Commando Company | KSK",
-      "Seal Team 6 Soldier | NSWC SEAL",
-      "Michael Syfers  | FBI Sniper",
-      "The Elite Mr. Muhlik | Elite Crew"
+    "items": [
+      "it1",
+      "it15",
+      "it38",
+      "it74",
+      "it58",
+      "it81",
+      "it59",
+      "it82",
+      "it60",
+      "it83",
+      "it84"
     ],
-    "jackpots": [
-      "Special Agent Ava | FBI",
-      "Getaway Sally | The Professionals",
-      "Vypa Sista of the Revolution | Guerrilla Warfare",
-      "Sir Bloody Silent Darryl | The Professionals",
-      "Sir Bloody Darryl Royale | The Professionals"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "stickers",
+    "id": "stickers_30usd",
     "name": "Sticker Capsule",
-    "tier": "diamond",
+    "tier": "gold",
     "price": 30000,
-    "fillers": [
-      "Sticker | High Heat",
-      "Sticker | sdy (Holo) | Paris 2023",
-      "Sticker | Apeks (Glitter) | Copenhagen 2024",
-      "Sticker | Liquid (Holo) | 2020 RMR",
-      "Sticker | Boom (Gold) | 2020 RMR",
-      "Sticker | Rare Atom (Holo) | Shanghai 2024"
+    "items": [
+      "it1",
+      "it16",
+      "it27",
+      "it55",
+      "it82",
+      "it60",
+      "it83",
+      "it84",
+      "it61",
+      "it85",
+      "it86"
     ],
-    "jackpots": [
-      "Sticker | 3DMAX | Katowice 2014",
-      "Sticker | LGB eSports | Katowice 2014",
-      "Sticker | Fnatic | Katowice 2014",
-      "Sticker | HellRaisers | Katowice 2014",
-      "Sticker | Vox Eminor | Katowice 2014",
-      "Sticker | Fnatic (Holo) | Katowice 2014"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "ak47",
     "name": "AK-47 Legends",
-    "tier": "ak47",
+    "tier": "gold",
     "price": 35000,
-    "fillers": [
-      "AK-47 | Safari Mesh",
-      "AK-47 | Slate",
-      "AK-47 | Ice Coaled",
-      "AK-47 | Redline"
+    "items": [
+      "it1",
+      "it17",
+      "it29",
+      "it76",
+      "it83",
+      "it84",
+      "it61",
+      "it85",
+      "it86",
+      "it62",
+      "it87"
     ],
-    "jackpots": [
-      "AK-47 | Frontside Misty",
-      "AK-47 | Legion of Anubis",
-      "AK-47 | Asiimov",
-      "AK-47 | The Empress",
-      "AK-47 | Bloodsport",
-      "AK-47 | Fuel Injector",
-      "AK-47 | Vulcan",
-      "AK-47 | Fire Serpent",
-      "AK-47 | Wild Lotus"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "howl",
+    "id": "m4_king",
     "name": "M4 King Vault",
-    "tier": "howl",
+    "tier": "diamond",
     "price": 40000,
-    "fillers": [
-      "M4A1-S | Night Terror",
-      "M4A4 | Spider Lily",
-      "M4A4 | Cyber Security",
-      "M4A1-S | Decimator",
-      "M4A1-S | Cyrex"
+    "items": [
+      "it1",
+      "it17",
+      "it30",
+      "it76",
+      "it84",
+      "it61",
+      "it85",
+      "it86",
+      "it62",
+      "it87",
+      "it63"
     ],
-    "jackpots": [
-      "M4A4 | In Living Color",
-      "M4A1-S | Golden Coil",
-      "M4A4 | The Emperor",
-      "M4A1-S | Printstream",
-      "M4A1-S | Blue Phosphor",
-      "M4A4 | Eye of Horus",
-      "M4A4 | Howl"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "awp",
     "name": "AWP Sniper Elite",
-    "tier": "awp",
+    "tier": "diamond",
     "price": 45000,
-    "fillers": [
-      "SSG 08 | Mainframe 001",
-      "AWP | Atheris",
-      "AWP | Neo-Noir",
-      "AWP | Chromatic Aberration"
+    "items": [
+      "it1",
+      "it17",
+      "it52",
+      "it77",
+      "it85",
+      "it86",
+      "it62",
+      "it87",
+      "it63",
+      "it88",
+      "it64"
     ],
-    "jackpots": [
-      "AWP | Hyper Beast",
-      "AWP | Asiimov",
-      "AWP | Wildfire",
-      "AWP | Containment Breach",
-      "AWP | Oni Taiji",
-      "AWP | Lightning Strike",
-      "AWP | Fade",
-      "AWP | Dragon Lore"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "anime",
     "name": "Anime & Waifu Collection",
-    "tier": "platinum",
+    "tier": "diamond",
     "price": 45000,
-    "fillers": [
-      "MAC-10 | Sakkaku",
-      "Desert Eagle | Kumicho Dragon",
-      "AWP | Neo-Noir"
+    "items": [
+      "it1",
+      "it17",
+      "it52",
+      "it77",
+      "it85",
+      "it86",
+      "it62",
+      "it87",
+      "it63",
+      "it88",
+      "it64"
     ],
-    "jackpots": [
-      "M4A4 | In Living Color",
-      "M4A4 | Temukau",
-      "AWP | Oni Taiji",
-      "AUG | Akihabara Accept"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -767,198 +1931,287 @@ const RAW_CASES = [
     "name": "Diamond Deck",
     "tier": "diamond",
     "price": 50000,
-    "fillers": [
-      "AK-47 | Slate",
-      "USP-S | Cortex",
-      "Five-SeveN | Angry Mob",
-      "M4A4 | Spider Lily",
-      "AWP | Atheris",
-      "AK-47 | Redline",
-      "M4A1-S | Cyrex",
-      "AWP | Neo-Noir",
-      "M4A4 | In Living Color"
+    "items": [
+      "it1",
+      "it18",
+      "it71",
+      "it78",
+      "it87",
+      "it63",
+      "it88",
+      "it64",
+      "it89",
+      "it65",
+      "it90"
     ],
-    "jackpots": [
-      "AK-47 | Asiimov",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "USP-S | Kill Confirmed",
-      "★ Navaja Knife | Crimson Web",
-      "★ Gut Knife | Doppler"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "deagle",
+    "id": "deagle_beast",
     "name": "Desert Eagle Beast",
-    "tier": "gold",
+    "tier": "diamond",
     "price": 55000,
-    "fillers": [
-      "Desert Eagle | Mudder",
-      "Desert Eagle | Light Rail",
-      "Desert Eagle | Kumicho Dragon"
+    "items": [
+      "it1",
+      "it18",
+      "it71",
+      "it78",
+      "it87",
+      "it63",
+      "it88",
+      "it64",
+      "it89",
+      "it65",
+      "it90"
     ],
-    "jackpots": [
-      "Desert Eagle | Code Red",
-      "Desert Eagle | Ocean Drive",
-      "Desert Eagle | Printstream",
-      "Desert Eagle | Blaze"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "emerald",
+    "id": "emerald_dynasty",
     "name": "Emerald Dynasty",
     "tier": "diamond",
     "price": 60000,
-    "fillers": [
-      "P250 | Valence",
-      "AK-47 | Ice Coaled",
-      "M4A1-S | Decimator",
-      "AK-47 | Frontside Misty",
-      "Desert Eagle | Code Red"
+    "items": [
+      "it1",
+      "it19",
+      "it31",
+      "it40",
+      "it88",
+      "it64",
+      "it89",
+      "it65",
+      "it90",
+      "it91",
+      "it66"
     ],
-    "jackpots": [
-      "★ Hydra Gloves | Emerald",
-      "M4A1-S | Blue Phosphor",
-      "AK-47 | Fire Serpent",
-      "AK-47 | Wild Lotus"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "crimson",
+    "id": "crimson_blood",
     "name": "Crimson Bloodline",
-    "tier": "gold",
+    "tier": "diamond",
     "price": 65000,
-    "fillers": [
-      "FAMAS | Colony",
-      "AK-47 | Redline",
-      "M4A1-S | Cyrex",
-      "Desert Eagle | Code Red",
-      "AK-47 | Legion of Anubis"
+    "items": [
+      "it1",
+      "it19",
+      "it53",
+      "it79",
+      "it89",
+      "it65",
+      "it90",
+      "it91",
+      "it66",
+      "it92",
+      "it42"
     ],
-    "jackpots": [
-      "AK-47 | Bloodsport",
-      "★ Navaja Knife | Crimson Web",
-      "★ Moto Gloves | Blood Pressure",
-      "★ Skeleton Knife | Crimson Web",
-      "★ Specialist Gloves | Crimson Kimono"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "covert_vault",
+    "id": "covert_jackpot",
     "name": "Covert Jackpot Vault",
-    "tier": "gold",
+    "tier": "diamond",
     "price": 70000,
-    "fillers": [
-      "AK-47 | Redline",
-      "M4A1-S | Cyrex",
-      "AWP | Neo-Noir",
-      "M4A4 | In Living Color",
-      "Desert Eagle | Code Red",
-      "AK-47 | Legion of Anubis",
-      "AWP | Chromatic Aberration"
+    "items": [
+      "it1",
+      "it36",
+      "it72",
+      "it41",
+      "it90",
+      "it91",
+      "it66",
+      "it92",
+      "it42",
+      "it67",
+      "it93"
     ],
-    "jackpots": [
-      "AK-47 | Asiimov",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "M4A1-S | Printstream",
-      "M4A4 | Howl"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "neon",
+    "id": "cyberpunk_75usd",
     "name": "Neon Cyberpunk",
     "tier": "diamond",
     "price": 75000,
-    "fillers": [
-      "M4A4 | Cyber Security",
-      "AK-47 | Ice Coaled",
-      "M4A1-S | Decimator",
-      "AWP | Neo-Noir",
-      "M4A4 | In Living Color",
-      "AWP | Chromatic Aberration",
-      "M4A1-S | Golden Coil"
+    "items": [
+      "it1",
+      "it36",
+      "it54",
+      "it41",
+      "it91",
+      "it66",
+      "it92",
+      "it42",
+      "it67",
+      "it93",
+      "it94"
     ],
-    "jackpots": [
-      "Desert Eagle | Ocean Drive",
-      "M4A1-S | Printstream",
-      "USP-S | Printstream",
-      "★ Specialist Gloves | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "elite",
+    "id": "elite_empire",
     "name": "Elite Empire",
-    "tier": "elite",
+    "tier": "diamond",
     "price": 80000,
-    "fillers": [
-      "AK-47 | Redline",
-      "M4A1-S | Cyrex",
-      "AWP | Neo-Noir",
-      "M4A4 | In Living Color",
-      "Desert Eagle | Code Red",
-      "AK-47 | Legion of Anubis",
-      "M4A1-S | Golden Coil",
-      "AK-47 | Asiimov"
+    "items": [
+      "it1",
+      "it36",
+      "it32",
+      "it81",
+      "it92",
+      "it42",
+      "it67",
+      "it93",
+      "it94",
+      "it68",
+      "it95"
     ],
-    "jackpots": [
-      "Desert Eagle | Ocean Drive",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "USP-S | Kill Confirmed",
-      "★ Gut Knife | Doppler"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "heavy_artillery",
     "name": "Heavy Artillery",
-    "tier": "gold",
+    "tier": "diamond",
     "price": 90000,
-    "fillers": [
-      "MAG-7 | Storm",
-      "M249 | Contrast Spray",
-      "Nova | Predator",
-      "M4A4 | Cyber Security",
-      "M4A4 | In Living Color",
-      "AK-47 | Asiimov",
-      "Desert Eagle | Ocean Drive",
-      "AWP | Hyper Beast"
+    "items": [
+      "it1",
+      "it20",
+      "it73",
+      "it60",
+      "it94",
+      "it68",
+      "it95",
+      "it69",
+      "it96",
+      "it108",
+      "it97"
     ],
-    "jackpots": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AWP | Asiimov",
-      "AK-47 | Bloodsport",
-      "AWP | Oni Taiji"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "knife_arena",
+    "id": "knife",
     "name": "Knife Arena",
     "tier": "knife",
     "price": 100000,
-    "fillers": [
-      "AK-47 | Redline",
-      "M4A1-S | Cyrex",
-      "AWP | Neo-Noir",
-      "M4A4 | In Living Color",
-      "AK-47 | Asiimov",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport"
+    "items": [
+      "it1",
+      "it21",
+      "it33",
+      "it83",
+      "it95",
+      "it69",
+      "it96",
+      "it108",
+      "it97",
+      "it70",
+      "it98"
     ],
-    "jackpots": [
-      "★ Navaja Knife | Crimson Web",
-      "★ Gut Knife | Doppler",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Stiletto Knife | Doppler",
-      "★ Talon Knife | Fade",
-      "★ Butterfly Knife | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -966,69 +2219,95 @@ const RAW_CASES = [
     "name": "Gloves Paradise",
     "tier": "gloves",
     "price": 120000,
-    "fillers": [
-      "AWP | Neo-Noir",
-      "AK-47 | Asiimov",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "Desert Eagle | Printstream",
-      "M4A4 | The Emperor",
-      "AWP | Asiimov",
-      "AK-47 | Bloodsport"
+    "items": [
+      "it1",
+      "it22",
+      "it74",
+      "it85",
+      "it108",
+      "it97",
+      "it70",
+      "it98",
+      "it43",
+      "it99",
+      "it109"
     ],
-    "jackpots": [
-      "★ Hydra Gloves | Emerald",
-      "★ Moto Gloves | Blood Pressure",
-      "★ Sport Gloves | Big Game",
-      "★ Specialist Gloves | Fade",
-      "★ Hand Wraps | Cobalt Skulls",
-      "★ Driver Gloves | King Snake",
-      "★ Sport Gloves | Vice",
-      "★ Sport Gloves | Pandora's Box"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "karambit",
+    "id": "karambit_kingdom",
     "name": "Karambit Kingdom",
     "tier": "knife",
     "price": 140000,
-    "fillers": [
-      "AK-47 | Asiimov",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AWP | Asiimov",
-      "AK-47 | Bloodsport",
-      "M4A4 | Temukau",
-      "USP-S | Printstream"
+    "items": [
+      "it1",
+      "it22",
+      "it55",
+      "it62",
+      "it98",
+      "it43",
+      "it99",
+      "it109",
+      "it100",
+      "it101",
+      "it102"
     ],
-    "jackpots": [
-      "★ Karambit | Tiger Tooth",
-      "★ Karambit | Lore",
-      "★ Karambit | Marble Fade",
-      "★ Karambit | Doppler",
-      "★ Karambit | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "doppler",
+    "id": "doppler_phases",
     "name": "Doppler Phases",
     "tier": "knife",
     "price": 160000,
-    "fillers": [
-      "M4A1-S | Decimator",
-      "AWP | Neo-Noir",
-      "AK-47 | Asiimov",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "M4A4 | Temukau",
-      "USP-S | Printstream"
+    "items": [
+      "it1",
+      "it24",
+      "it76",
+      "it64",
+      "it101",
+      "it102",
+      "it110",
+      "it44",
+      "it103",
+      "it111",
+      "it112"
     ],
-    "jackpots": [
-      "★ Gut Knife | Doppler",
-      "★ Stiletto Knife | Doppler",
-      "★ Karambit | Doppler"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -1036,22 +2315,31 @@ const RAW_CASES = [
     "name": "Butterfly Dreams",
     "tier": "knife",
     "price": 180000,
-    "fillers": [
-      "AK-47 | Asiimov",
-      "AWP | Hyper Beast",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AWP | Asiimov",
-      "AK-47 | Bloodsport",
-      "M4A4 | Temukau",
-      "USP-S | Printstream",
-      "AWP | Wildfire"
+    "items": [
+      "it1",
+      "it24",
+      "it35",
+      "it89",
+      "it110",
+      "it44",
+      "it103",
+      "it111",
+      "it112",
+      "it45",
+      "it104"
     ],
-    "jackpots": [
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Butterfly Knife | Slaughter",
-      "★ Butterfly Knife | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -1059,56 +2347,95 @@ const RAW_CASES = [
     "name": "M9 Bayonet Vault",
     "tier": "knife",
     "price": 200000,
-    "fillers": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Printstream",
-      "AWP | Wildfire",
-      "USP-S | Kill Confirmed"
+    "items": [
+      "it1",
+      "it37",
+      "it56",
+      "it90",
+      "it111",
+      "it112",
+      "it45",
+      "it104",
+      "it113",
+      "it105",
+      "it106"
     ],
-    "jackpots": [
-      "★ Huntsman Knife | Lore",
-      "★ M9 Bayonet | Marble Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "legendary",
+    "id": "dragon",
     "name": "Dragon Lore Vault",
-    "tier": "legendary",
+    "tier": "dragon",
     "price": 225000,
-    "fillers": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Printstream",
-      "AWP | Wildfire",
-      "USP-S | Kill Confirmed"
+    "items": [
+      "it1",
+      "it37",
+      "it56",
+      "it90",
+      "it111",
+      "it112",
+      "it45",
+      "it104",
+      "it113",
+      "it105",
+      "it106"
     ],
-    "jackpots": [
-      "AWP | Containment Breach",
-      "AWP | Lightning Strike",
-      "AWP | Fade",
-      "AWP | Medusa",
-      "AWP | Dragon Lore"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "skeleton",
+    "id": "skeleton_web",
     "name": "Skeleton Web",
     "tier": "knife",
     "price": 250000,
-    "fillers": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Printstream",
-      "AWP | Wildfire",
-      "USP-S | Kill Confirmed"
+    "items": [
+      "it1",
+      "it37",
+      "it56",
+      "it91",
+      "it112",
+      "it45",
+      "it104",
+      "it113",
+      "it105",
+      "it106",
+      "it114"
     ],
-    "jackpots": [
-      "★ Skeleton Knife | Crimson Web",
-      "★ Specialist Gloves | Crimson Kimono"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
@@ -1116,331 +2443,354 @@ const RAW_CASES = [
     "name": "Vice & Pandora",
     "tier": "gloves",
     "price": 300000,
-    "fillers": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AWP | Containment Breach",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream"
+    "items": [
+      "it1",
+      "it25",
+      "it40",
+      "it67",
+      "it106",
+      "it114",
+      "it115",
+      "it46",
+      "it107",
+      "it116",
+      "it47"
     ],
-    "jackpots": [
-      "★ Sport Gloves | Big Game",
-      "★ Specialist Gloves | Fade",
-      "★ Sport Gloves | Vice",
-      "★ Sport Gloves | Pandora's Box"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "talon",
+    "id": "talon_vortex",
     "name": "Talon Vortex",
     "tier": "knife",
     "price": 350000,
-    "fillers": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AWP | Containment Breach",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream"
+    "items": [
+      "it1",
+      "it28",
+      "it40",
+      "it93",
+      "it114",
+      "it115",
+      "it46",
+      "it107",
+      "it116",
+      "it47",
+      "it117"
     ],
-    "jackpots": [
-      "★ Huntsman Knife | Lore",
-      "★ Talon Knife | Fade",
-      "★ Butterfly Knife | Slaughter"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "volvix",
+    "id": "mythic",
     "name": "CASE MYTHIC",
-    "tier": "volvix",
+    "tier": "mythic",
     "price": 400000,
-    "fillers": [
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AWP | Containment Breach",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "★ Navaja Knife | Crimson Web",
-      "★ Gut Knife | Doppler",
-      "★ Bowie Knife | Tiger Tooth"
+    "items": [
+      "it1",
+      "it28",
+      "it79",
+      "it93",
+      "it115",
+      "it46",
+      "it107",
+      "it116",
+      "it47",
+      "it117",
+      "it118"
     ],
-    "jackpots": [
-      "★ Karambit | Doppler",
-      "AK-47 | Fire Serpent",
-      "★ Butterfly Knife | Fade",
-      "★ Sport Gloves | Pandora's Box",
-      "AK-47 | Gold Arabesque",
-      "M4A4 | Howl",
-      "AWP | Dragon Lore",
-      "AK-47 | Wild Lotus"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "blue_gem",
     "name": "Case Hardened Blue Gem",
-    "tier": "legendary",
+    "tier": "knife",
     "price": 450000,
-    "fillers": [
-      "Five-SeveN | Case Hardened",
-      "AK-47 | The Empress",
-      "M4A4 | The Emperor",
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "★ Navaja Knife | Crimson Web",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth"
+    "items": [
+      "it1",
+      "it28",
+      "it79",
+      "it93",
+      "it115",
+      "it46",
+      "it107",
+      "it116",
+      "it47",
+      "it117",
+      "it118"
     ],
-    "jackpots": [
-      "★ Karambit | Doppler",
-      "AK-47 | Fire Serpent",
-      "★ Butterfly Knife | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "katowice_relics",
+    "id": "katowice_2014",
     "name": "Katowice 2014 Relics",
-    "tier": "diamond",
+    "tier": "vip",
     "price": 500000,
-    "fillers": [
-      "Sticker | High Heat",
-      "Sticker | 3DMAX | Katowice 2014",
-      "Sticker | LGB eSports | Katowice 2014",
-      "Sticker | Fnatic | Katowice 2014",
-      "Sticker | HellRaisers | Katowice 2014",
-      "Sticker | Vox Eminor | Katowice 2014"
+    "items": [
+      "it1",
+      "it28",
+      "it80",
+      "it68",
+      "it107",
+      "it116",
+      "it47",
+      "it117",
+      "it118",
+      "it119",
+      "it120"
     ],
-    "jackpots": [
-      "Sticker | Team Dignitas | Katowice 2014",
-      "Sticker | Natus Vincere | Katowice 2014",
-      "Sticker | ESL Skull (Foil) | Katowice 2014",
-      "Sticker | Fnatic (Holo) | Katowice 2014"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "fade_master",
     "name": "Fade Collection Master",
-    "tier": "legendary",
+    "tier": "vip",
     "price": 600000,
-    "fillers": [
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "M4A1-S | Printstream",
-      "★ Navaja Knife | Crimson Web",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Specialist Gloves | Fade"
+    "items": [
+      "it1",
+      "it26",
+      "it80",
+      "it95",
+      "it116",
+      "it47",
+      "it117",
+      "it118",
+      "it119",
+      "it120",
+      "it121"
     ],
-    "jackpots": [
-      "★ Talon Knife | Fade",
-      "AWP | Fade",
-      "Glock-18 | Fade",
-      "★ Karambit | Fade",
-      "★ Butterfly Knife | Fade"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "godlike_armory",
     "name": "Godlike Armory",
-    "tier": "volvix",
+    "tier": "vip",
     "price": 700000,
-    "fillers": [
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "AWP | Oni Taiji",
-      "★ Gut Knife | Doppler",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Specialist Gloves | Fade",
-      "★ Stiletto Knife | Doppler"
+    "items": [
+      "it1",
+      "it26",
+      "it58",
+      "it96",
+      "it118",
+      "it119",
+      "it120",
+      "it121",
+      "it122",
+      "it123",
+      "it48"
     ],
-    "jackpots": [
-      "M4A1-S | Blue Phosphor",
-      "M4A1-S | Hot Rod",
-      "AK-47 | Vulcan",
-      "M4A4 | Eye of Horus",
-      "M4A1-S | Knight",
-      "AK-47 | Fire Serpent",
-      "★ Sport Gloves | Vice",
-      "M4A4 | Howl"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "sovereign_diamond",
     "name": "Sovereign Diamond",
-    "tier": "volvix",
+    "tier": "vip",
     "price": 750000,
-    "fillers": [
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "AWP | Oni Taiji",
-      "★ Gut Knife | Doppler",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Specialist Gloves | Fade",
-      "★ Stiletto Knife | Doppler",
-      "★ Hand Wraps | Cobalt Skulls"
+    "items": [
+      "it1",
+      "it38",
+      "it58",
+      "it108",
+      "it119",
+      "it120",
+      "it121",
+      "it122",
+      "it123",
+      "it48",
+      "it124"
     ],
-    "jackpots": [
-      "M4A1-S | Blue Phosphor",
-      "AWP | Lightning Strike",
-      "Desert Eagle | Blaze",
-      "M4A1-S | Hot Rod",
-      "AK-47 | Vulcan",
-      "M4A4 | Eye of Horus",
-      "AWP | Fade",
-      "★ Karambit | Lore",
-      "M4A1-S | Knight",
-      "AK-47 | Fire Serpent",
-      "AWP | Dragon Lore",
-      "AK-47 | Wild Lotus"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "kingpin_vault",
     "name": "Kingpin Vault",
-    "tier": "volvix",
+    "tier": "vip",
     "price": 850000,
-    "fillers": [
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "AWP | Oni Taiji",
-      "★ Gut Knife | Doppler",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Specialist Gloves | Fade",
-      "★ Stiletto Knife | Doppler",
-      "★ Hand Wraps | Cobalt Skulls",
-      "M4A1-S | Blue Phosphor",
-      "AWP | Lightning Strike",
-      "Desert Eagle | Blaze"
+    "items": [
+      "it1",
+      "it38",
+      "it81",
+      "it97",
+      "it121",
+      "it122",
+      "it123",
+      "it48",
+      "it124",
+      "it125",
+      "it126"
     ],
-    "jackpots": [
-      "M4A1-S | Hot Rod",
-      "★ Talon Knife | Fade",
-      "AK-47 | Vulcan",
-      "M4A4 | Eye of Horus",
-      "AWP | Fade",
-      "★ Karambit | Lore",
-      "★ M9 Bayonet | Marble Fade",
-      "M4A1-S | Knight",
-      "AK-47 | Fire Serpent",
-      "★ Sport Gloves | Vice",
-      "M4A4 | Howl",
-      "AWP | Dragon Lore",
-      "AK-47 | Wild Lotus"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
     "id": "infinity_secret",
     "name": "Infinity Secret",
-    "tier": "volvix",
+    "tier": "vip",
     "price": 900000,
-    "fillers": [
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "AWP | Oni Taiji",
-      "★ Gut Knife | Doppler",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Specialist Gloves | Fade",
-      "★ Stiletto Knife | Doppler",
-      "★ Hand Wraps | Cobalt Skulls",
-      "M4A1-S | Blue Phosphor",
-      "AWP | Lightning Strike",
-      "Desert Eagle | Blaze",
-      "M4A1-S | Hot Rod"
+    "items": [
+      "it1",
+      "it27",
+      "it59",
+      "it98",
+      "it123",
+      "it48",
+      "it124",
+      "it125",
+      "it126",
+      "it127",
+      "it128"
     ],
-    "jackpots": [
-      "★ Talon Knife | Fade",
-      "AK-47 | Vulcan",
-      "M4A4 | Eye of Horus",
-      "★ Karambit | Tiger Tooth",
-      "★ Karambit | Lore",
-      "★ Butterfly Knife | Slaughter",
-      "★ Karambit | Doppler",
-      "AK-47 | Fire Serpent",
-      "★ Butterfly Knife | Fade",
-      "★ Sport Gloves | Vice",
-      "AK-47 | Gold Arabesque",
-      "M4A4 | Howl",
-      "AWP | Dragon Lore"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   },
   {
-    "id": "olympus_1m",
+    "id": "volvix",
     "name": "CS2 OLYMPUS GRAIL 1M",
     "tier": "volvix",
     "price": 1000000,
-    "fillers": [
-      "AK-47 | Bloodsport",
-      "USP-S | Kill Confirmed",
-      "AK-47 | Fuel Injector",
-      "M4A1-S | Printstream",
-      "AWP | Oni Taiji",
-      "★ Gut Knife | Doppler",
-      "★ Shadow Daggers | Fade",
-      "★ Bowie Knife | Tiger Tooth",
-      "★ Huntsman Knife | Lore",
-      "★ Specialist Gloves | Fade",
-      "★ Stiletto Knife | Doppler",
-      "★ Hand Wraps | Cobalt Skulls",
-      "M4A1-S | Blue Phosphor",
-      "AWP | Lightning Strike",
-      "Desert Eagle | Blaze",
-      "M4A1-S | Hot Rod",
-      "★ Talon Knife | Fade",
-      "AK-47 | Vulcan",
-      "M4A4 | Eye of Horus",
-      "★ Driver Gloves | King Snake"
+    "items": [
+      "it1",
+      "it29",
+      "it83",
+      "it109",
+      "it127",
+      "it128",
+      "it129",
+      "it49",
+      "it130",
+      "it131",
+      "it132"
     ],
-    "jackpots": [
-      "AWP | Fade",
-      "★ Karambit | Tiger Tooth",
-      "★ Karambit | Lore",
-      "★ Butterfly Knife | Slaughter",
-      "★ M9 Bayonet | Marble Fade",
-      "★ Karambit | Doppler",
-      "AK-47 | Fire Serpent",
-      "★ Specialist Gloves | Crimson Kimono",
-      "★ Sport Gloves | Vice",
-      "★ Butterfly Knife | Fade",
-      "★ Sport Gloves | Pandora's Box",
-      "AK-47 | Gold Arabesque",
-      "M4A4 | Howl",
-      "AWP | Gungnir",
-      "AWP | Dragon Lore",
-      "AK-47 | Wild Lotus"
+    "w": [
+      0.2600000000000001,
+      0.2300000000000001,
+      0.20000000000000007,
+      0.16000000000000006,
+      0.13500000000000006,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001,
+      0.002500000000000001
     ]
   }
 ];
-
-const CASES = RAW_CASES.map(createCase);
-CASES.forEach(c => {
-  const sum = c.w.reduce((a, b) => a + b, 0);
-  c.w = c.w.map(w => w / sum);
-});
-
 const CASES_BY_ID = Object.fromEntries(CASES.map(c => [c.id, c]));
 const caseEV = c => c.items.reduce((s, id, i) => s + (byId[id] ? byId[id].value : 0) * c.w[i], 0);
-
 module.exports = { RARITY, ITEMS, byId, byName, CASES, CASES_BY_ID, caseEV };
