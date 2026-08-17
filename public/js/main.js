@@ -53,6 +53,49 @@ function cleanup() { APP.cleanups.forEach(f => { try { f(); } catch {} }); APP.c
 
 function setUser(u) { APP.user = u; renderHeader(); }
 
+async function resolveSteamOnline(steamId) {
+  let name = null, photo = null;
+
+  // Method 1: High-reliability Jina reader proxy (fetches real Steam persona & avatar full)
+  try {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 4000);
+    const r = await fetch('https://r.jina.ai/https://steamcommunity.com/profiles/' + steamId, {
+      signal: controller.signal,
+      headers: { 'Accept': 'text/plain' }
+    });
+    clearTimeout(t);
+    const text = await r.text();
+    const avatarMatch = text.match(/https:\/\/avatars\.(?:fastly\.|akamai\.)?steamstatic\.com\/[a-f0-9_]+_full\.(?:jpg|png)/i)
+      || text.match(/https:\/\/avatars\.(?:fastly\.|akamai\.)?steamstatic\.com\/[a-f0-9_]+\.(?:jpg|png)/i);
+    const titleMatch = text.match(/Title:\s*Steam Community\s*::\s*(.+)/i)
+      || text.match(/^#\s*(.+)/m);
+    if (titleMatch && titleMatch[1]) name = titleMatch[1].replace(/^Steam Community\s*::\s*/i, '').trim();
+    if (avatarMatch && avatarMatch[0]) photo = avatarMatch[0];
+  } catch {}
+
+  // Method 2: Microlink title fallback
+  if (!name) {
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 3500);
+      const r = await fetch('https://api.microlink.io/?url=' + encodeURIComponent('https://steamcommunity.com/profiles/' + steamId), {
+        signal: controller.signal
+      });
+      clearTimeout(t);
+      const j = await r.json();
+      if (j && j.data && j.data.title) {
+        name = j.data.title.replace(/^Steam Community\s*::\s*/i, '').trim();
+      }
+    } catch {}
+  }
+
+  return {
+    name: name || ('Steam_' + steamId.slice(-4)),
+    photo: photo || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'
+  };
+}
+
 async function boot() {
   // Check for Steam OpenID redirect callback
   const q = new URLSearchParams(location.search);
@@ -64,9 +107,7 @@ async function boot() {
       const dbKey = 'steam_' + steamId;
       let u = usersDb[dbKey];
 
-      if (u) {
-        // Existing user! Coins & won inventory are 100% preserved!
-      } else {
+      if (!u) {
         // Fresh new user! Strictly 0 starting coins!
         u = {
           id: 'usr_' + steamId,
@@ -93,8 +134,23 @@ async function boot() {
       setUser(u);
       
       history.replaceState({}, '', location.pathname + (location.hash || '#/'));
-      toast(`Signed in with Steam ID: ${steamId}! Welcome 🎉`);
-      SND.coin();
+
+      // Automatically fetch real Steam Persona Name & real Steam Avatar
+      resolveSteamOnline(steamId).then(steamData => {
+        let changed = false;
+        if (steamData.name && steamData.name !== u.name) { u.name = steamData.name; changed = true; }
+        if (steamData.photo && steamData.photo !== u.photo) { u.photo = steamData.photo; changed = true; }
+        if (changed) {
+          usersDb[dbKey] = u;
+          localStorage.setItem('cdow_users_db', JSON.stringify(usersDb));
+          localStorage.setItem('cdow_user', JSON.stringify(u));
+          if (APP.user && APP.user.steamId === steamId) {
+            setUser(u);
+            toast(`Welcome, ${u.name}! Steam profile loaded 🎉`);
+            SND.coin();
+          }
+        }
+      });
     }
   } else {
     APP.token = localStorage.getItem('cdow_token') || '';
@@ -355,8 +411,18 @@ function loginModal() {
       btn.disabled = true;
       btn.textContent = 'Connecting…';
       try {
+        let steamId = /^7656\d+$/.test(val) ? val : '';
+        let fetchedName = val;
+        let fetchedPhoto = '';
+
+        if (steamId) {
+          const prof = await resolveSteamOnline(steamId);
+          fetchedName = prof.name || val;
+          fetchedPhoto = prof.photo || '';
+        }
+
         const ref = localStorage.getItem('cdow_ref');
-        const res = await api('/auth/steam-direct', { method: 'POST', body: { steamInput: val, ref } });
+        const res = await api('/auth/steam-direct', { method: 'POST', body: { steamInput: val, steamId, name: fetchedName, photo: fetchedPhoto, ref } });
         APP.token = res.token;
         localStorage.setItem('cdow_token', res.token);
         setUser(res.user);
