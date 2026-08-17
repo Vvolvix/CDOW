@@ -186,6 +186,151 @@
     socket.emit('x50', x50State);
   }, 1000);
 
+  // ---------------- CRASH (CS2 ROCKET CRASH) STATE ----------------
+  const CRASH_GROWTH = 0.22;
+  let crashState = {
+    phase: 'bet', // 'bet' | 'run' | 'bust'
+    endsAt: Date.now() + 5000,
+    startedAt: 0,
+    crashAt: 2.35,
+    mult: 1.0,
+    bets: [],
+    history: [
+      { m: 1.85 }, { m: 3.40 }, { m: 1.25 }, { m: 12.50 }, { m: 1.10 }, { m: 2.75 }, { m: 1.45 }, { m: 5.20 }
+    ]
+  };
+
+  setInterval(() => {
+    const now = Date.now();
+    if (crashState.phase === 'bet') {
+      // Add occasional bot bets during betting phase
+      if (Math.random() < 0.35 && crashState.bets.length < 6) {
+        const bot = BOTS[Math.floor(Math.random() * BOTS.length)];
+        const amt = [100, 250, 500, 1000, 2500][Math.floor(Math.random() * 5)];
+        const auto = [1.5, 2.0, 3.0, 5.0, 0][Math.floor(Math.random() * 5)];
+        if (!crashState.bets.some(b => b.u === bot.id)) {
+          crashState.bets.push({ u: bot.id, n: bot.name, p: bot.photo, a: amt, auto: auto, c: false, at: 0 });
+        }
+      }
+
+      if (now >= crashState.endsAt) {
+        const r = Math.random();
+        let targetCrash = 1.0;
+        if (r < 0.04) {
+          targetCrash = 1.00;
+        } else {
+          targetCrash = Math.max(1.01, Math.floor((0.96 / (1 - (r * 0.965))) * 100) / 100);
+          if (targetCrash > 250) targetCrash = 250;
+        }
+
+        crashState.phase = 'run';
+        crashState.startedAt = now;
+        crashState.crashAt = targetCrash;
+        crashState.mult = 1.00;
+        
+        const durationSec = Math.log(targetCrash) / CRASH_GROWTH;
+        crashState.endsAt = now + Math.max(700, durationSec * 1000);
+      }
+    } else if (crashState.phase === 'run') {
+      const elapsedSec = (now - crashState.startedAt) / 1000;
+      const curMult = Math.exp(CRASH_GROWTH * elapsedSec);
+      crashState.mult = curMult;
+
+      // Auto-cashout check
+      crashState.bets.forEach(b => {
+        if (!b.c && b.auto && b.auto > 1.0 && curMult >= b.auto && b.auto <= crashState.crashAt) {
+          b.c = true;
+          b.at = b.auto;
+          if (user && b.u === user.id) {
+            const winAmt = Math.round(b.a * b.auto);
+            user.bal += winAmt;
+            user.stats.won += winAmt;
+            saveUser();
+          }
+        }
+      });
+
+      if (now >= crashState.endsAt || curMult >= crashState.crashAt) {
+        crashState.phase = 'bust';
+        crashState.mult = crashState.crashAt;
+        crashState.endsAt = now + 3500;
+        crashState.history.push({ m: crashState.crashAt });
+        if (crashState.history.length > 15) crashState.history.shift();
+        socket.emit('rush:bust', { crashAt: crashState.crashAt });
+      }
+    } else if (crashState.phase === 'bust') {
+      if (now >= crashState.endsAt) {
+        crashState.phase = 'bet';
+        crashState.endsAt = now + 5000;
+        crashState.bets = [];
+        crashState.mult = 1.00;
+      }
+    }
+
+    socket.emit('rush', crashState);
+    socket.emit('crash', crashState);
+  }, 100);
+
+  // ---------------- ROYAL BATTLE (JACKPOT) STATE ----------------
+  let royalState = {
+    phase: 'bet',
+    endsAt: Date.now() + 25000,
+    pot: 4500,
+    players: [
+      { id: 'b1', n: 'ShadowSniper99', p: 'img/avatars/avatar_2.svg', a: 2500, chance: 55.5 },
+      { id: 'b2', n: 'Vortex_CS', p: 'img/avatars/avatar_1.svg', a: 2000, chance: 44.5 }
+    ],
+    history: [
+      { n: 'PhantomBlade', prize: 35000 },
+      { n: 'NeonRider', prize: 18000 }
+    ]
+  };
+
+  setInterval(() => {
+    const now = Date.now();
+    if (royalState.phase === 'bet') {
+      if (Math.random() < 0.25 && royalState.players.length < 6) {
+        const bot = BOTS[Math.floor(Math.random() * BOTS.length)];
+        if (!royalState.players.some(p => p.id === bot.id)) {
+          const amt = [500, 1000, 2500, 5000][Math.floor(Math.random() * 4)];
+          royalState.players.push({ id: bot.id, n: bot.name, p: bot.photo, a: amt });
+          royalState.pot += amt;
+          royalState.players.forEach(p => {
+            p.chance = Number(((p.a / royalState.pot) * 100).toFixed(1));
+          });
+        }
+      }
+      if (now >= royalState.endsAt) {
+        royalState.phase = 'draw';
+        royalState.endsAt = now + 4000;
+        const total = royalState.pot;
+        let roll = Math.random() * total;
+        let winner = royalState.players[0];
+        let acc = 0;
+        for (const p of royalState.players) {
+          acc += p.a;
+          if (roll <= acc) { winner = p; break; }
+        }
+        const prize = Math.round(total * 0.95);
+        royalState.history.unshift({ n: winner.n, prize });
+        if (royalState.history.length > 10) royalState.history.pop();
+        if (user && winner.id === user.id) {
+          user.bal += prize;
+          user.stats.won += prize;
+          saveUser();
+        }
+      }
+    } else if (royalState.phase === 'draw') {
+      if (now >= royalState.endsAt) {
+        royalState.phase = 'bet';
+        royalState.endsAt = now + 25000;
+        royalState.pot = 0;
+        royalState.players = [];
+      }
+    }
+    socket.emit('royal', royalState);
+  }, 1000);
+
   // ---------------- CASE BATTLES STATE ----------------
   let battleIdSeq = 100;
   let battlesList = [
@@ -579,7 +724,91 @@
         return b;
       }
 
-      // 10. Inventory & Selling
+      // 10. Crash (CS2 Rocket Crash)
+      if (path === '/crash/state' || path === '/rush/state' || path === '/rushmid/state') {
+        return crashState;
+      }
+      if (path === '/crash/bet' || path === '/rush/bet' || path === '/rushmid/bet') {
+        if (!user) throw new Error('Please sign in first');
+        if (crashState.phase !== 'bet') throw new Error('Betting is closed for this round — wait for the next takeoff');
+        const amount = Math.max(10, Math.round(+(body.amount || 0)));
+        if (user.bal < amount) throw new Error('Insufficient coins balance');
+        if (crashState.bets.some(b => b.u === user.id)) throw new Error('You already placed a bet for this round');
+
+        const auto = Math.max(0, Math.round((+(body.auto || 0)) * 100) / 100);
+        user.bal -= amount;
+        user.stats.wagered += amount;
+        saveUser();
+
+        crashState.bets.push({
+          u: user.id,
+          n: user.name,
+          p: user.photo,
+          a: amount,
+          auto: auto,
+          c: false,
+          at: 0
+        });
+
+        socket.emit('rush', crashState);
+        socket.emit('crash', crashState);
+        return { ok: true, balance: user.bal };
+      }
+      if (path === '/crash/cashout' || path === '/rush/cashout' || path === '/rushmid/cashout') {
+        if (!user) throw new Error('Please sign in first');
+        if (crashState.phase !== 'run') throw new Error('Cannot cash out right now');
+
+        const myBet = crashState.bets.find(b => b.u === user.id);
+        if (!myBet) throw new Error('No active bet found');
+        if (myBet.c) throw new Error('Already cashed out');
+
+        const elapsedSec = (Date.now() - crashState.startedAt) / 1000;
+        const curMult = Math.min(crashState.crashAt, Math.exp(CRASH_GROWTH * elapsedSec));
+        const cashMult = Math.floor(curMult * 100) / 100;
+
+        myBet.c = true;
+        myBet.at = cashMult;
+
+        const winAmt = Math.round(myBet.a * cashMult);
+        user.bal += winAmt;
+        user.stats.won += winAmt;
+        saveUser();
+
+        socket.emit('rush', crashState);
+        socket.emit('crash', crashState);
+        return { ok: true, mult: cashMult, win: winAmt, balance: user.bal };
+      }
+
+      // 11. Royal Battle (Jackpot)
+      if (path === '/royal/state') {
+        return royalState;
+      }
+      if (path === '/royal/join') {
+        if (!user) throw new Error('Please sign in first');
+        if (royalState.phase !== 'bet') throw new Error('Draw in progress — wait for next round');
+        const amount = Math.max(10, Math.round(+(body.amount || 0)));
+        if (user.bal < amount) throw new Error('Insufficient coins balance');
+
+        user.bal -= amount;
+        user.stats.wagered += amount;
+        saveUser();
+
+        const existing = royalState.players.find(p => p.id === user.id);
+        if (existing) {
+          existing.a += amount;
+        } else {
+          royalState.players.push({ id: user.id, n: user.name, p: user.photo, a: amount, chance: 0 });
+        }
+        royalState.pot += amount;
+        royalState.players.forEach(p => {
+          p.chance = Number(((p.a / royalState.pot) * 100).toFixed(1));
+        });
+
+        socket.emit('royal', royalState);
+        return { ok: true, balance: user.bal };
+      }
+
+      // 12. Inventory & Selling
       if (path === '/inventory') {
         return user ? user.inv : [];
       }

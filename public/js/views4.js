@@ -1,4 +1,4 @@
-// CDOW views — Royal Battle jackpot & RUSHMID crash. MADE BY VOLVIX.
+// CDOW views — Royal Battle jackpot & CS2 Crash Rocket. MADE BY VOLVIX.
 
 // ---------------- ROYAL BATTLE ----------------
 register('royal', (view) => {
@@ -58,134 +58,277 @@ register('royal', (view) => {
   const t = setInterval(render, 1000); onRoute(() => clearInterval(t));
 });
 
-// ---------------- RUSHMID (Crash) ----------------
-register('rushmid', (view) => {
+// ---------------- CS2 CRASH ROCKET ----------------
+register('crash', (view) => {
   let st = null, points = [], raf = null, busted = false;
-  const GROWTH = 0.22; // matches server
+  const GROWTH = 0.22;
+  
   view.innerHTML = `
     <div class="page-head">
-      <div class="page-title"><span class="pico">${ART.ICONS.rocket}</span>RUSHMID</div>
+      <div class="page-title"><span class="pico" style="color:var(--green)">${ART.ICONS.rocket}</span>Crash Rocket <span class="muted" style="font-size:14px">— cash out before the rocket crashes</span></div>
       <div class="timer-pill" id="rutimer"><span class="t">--</span></div>
     </div>
+    
+    <!-- Past Multipliers History Strip -->
     <div class="rush-history" id="ruhist"></div>
+    
     <div class="rush-stage">
-      <div class="rush-canvas-wrap">
-        <canvas id="rucanvas" style="width:100%;height:100%"></canvas>
-        <div class="rush-mult" id="rumult">1.00×</div>
+      <div class="rush-canvas-wrap" style="position:relative;border:1px solid rgba(16,185,129,.2);border-radius:12px;overflow:hidden;background:#030805">
+        <canvas id="rucanvas" style="width:100%;height:320px;display:block"></canvas>
+        <div class="rush-mult" id="rumult" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--display);font-size:54px;font-weight:900;text-shadow:0 0 30px rgba(16,185,129,.4);pointer-events:none">1.00×</div>
       </div>
+      
       <div class="panel" style="margin-top:14px">
-        <div class="row" style="flex-wrap:wrap">
-          <input type="number" id="ruamt" value="100" min="10" style="max-width:140px" class="input" placeholder="Bet">
-          <input type="number" id="ruauto" min="0" step="0.1" style="max-width:140px" class="input" placeholder="Auto cashout ×">
-          ${[100, 500, 1000, 5000].map(v => `<div class="amt-chip" data-ru="${v}" style="padding:7px 12px">${fmt(v)}</div>`).join('')}
+        <div class="row" style="flex-wrap:wrap;gap:10px;align-items:center">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span class="muted" style="font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Bet Coins</span>
+            <input type="number" id="ruamt" value="100" min="10" style="max-width:140px" class="input" placeholder="Bet">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span class="muted" style="font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Auto Cashout</span>
+            <input type="number" id="ruauto" min="0" step="0.1" style="max-width:140px" class="input" placeholder="e.g. 2.00×">
+          </div>
+          <div class="row" style="gap:6px;margin-top:18px">
+            ${[100, 500, 1000, 5000].map(v => `<div class="amt-chip" data-ru="${v}" style="padding:7px 12px">${fmt(v)}</div>`).join('')}
+          </div>
           <div class="grow"></div>
-          <button class="btn big" id="rubet">PLACE BET</button>
-          <button class="btn gold big hidden" id="rucash">CASH OUT <span id="rucashval"></span></button>
+          <div style="margin-top:18px">
+            <button class="btn green big" id="rubet" style="min-width:160px">${ART.ICONS.rocket} PLACE BET</button>
+            <button class="btn gold big hidden" id="rucash" style="min-width:180px;background:linear-gradient(135deg,#ffd700,#f59e0b);color:#020503;font-weight:800;animation:glowPulse 1s infinite">CASH OUT <span id="rucashval"></span></button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="sec-title">Round bets</div>
-    <div class="panel"><div class="bets-list" id="rubets"></div></div>`;
+    
+    <div class="sec-title" style="margin-top:24px">Live Round Bets</div>
+    <div class="panel"><div class="bets-list" id="rubets" style="max-height:280px;overflow-y:auto"></div></div>`;
+
   $$('[data-ru]').forEach(c => c.onclick = () => { $('#ruamt').value = c.dataset.ru; SND.click(); });
 
-  const cv = $('#rucanvas'), ctx2 = cv.getContext('2d');
-  function sizeCanvas() { cv.width = cv.clientWidth * devicePixelRatio; cv.height = cv.clientHeight * devicePixelRatio; }
-  sizeCanvas(); window.addEventListener('resize', sizeCanvas); onRoute(() => window.removeEventListener('resize', sizeCanvas));
+  const cv = $('#rucanvas');
+  const ctx2 = cv.getContext('2d');
+  function sizeCanvas() {
+    if (!cv) return;
+    cv.width = cv.clientWidth * (window.devicePixelRatio || 1);
+    cv.height = cv.clientHeight * (window.devicePixelRatio || 1);
+  }
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+  onRoute(() => window.removeEventListener('resize', sizeCanvas));
 
-  function draw(now) {
-    const W = cv.width, H = cv.height, dpr = devicePixelRatio;
+  function draw() {
+    if (!cv || !ctx2) return;
+    const W = cv.width, H = cv.height, dpr = window.devicePixelRatio || 1;
     ctx2.clearRect(0, 0, W, H);
-    // grid
-    ctx2.strokeStyle = 'rgba(255,255,255,.04)'; ctx2.lineWidth = 1;
-    for (let i = 1; i < 6; i++) { ctx2.beginPath(); ctx2.moveTo(0, H * i / 6); ctx2.lineTo(W, H * i / 6); ctx2.stroke(); }
+    
+    // Grid Lines
+    ctx2.strokeStyle = 'rgba(16,185,129,0.06)';
+    ctx2.lineWidth = 1 * dpr;
+    for (let i = 1; i < 6; i++) {
+      ctx2.beginPath();
+      ctx2.moveTo(0, H * i / 6);
+      ctx2.lineTo(W, H * i / 6);
+      ctx2.stroke();
+    }
+    for (let j = 1; j < 8; j++) {
+      ctx2.beginPath();
+      ctx2.moveTo(W * j / 8, 0);
+      ctx2.lineTo(W * j / 8, H);
+      ctx2.stroke();
+    }
+
     const mult = curMult();
-    const maxM = Math.max(2, mult * 1.15);
-    const T = 14000;
+    const maxM = Math.max(2.2, mult * 1.15);
+    const T = Math.max(8000, points.length ? points[points.length - 1].t * 1.25 : 8000);
     const n = points.length;
+
     if (n > 1) {
       const grad = ctx2.createLinearGradient(0, 0, 0, H);
-      const col = busted ? '255,70,85' : '233,189,92';
-      grad.addColorStop(0, `rgba(${col},.28)`); grad.addColorStop(1, `rgba(${col},0)`);
+      const isRed = busted;
+      const col = isRed ? '239,68,68' : '16,185,129';
+      grad.addColorStop(0, `rgba(${col}, 0.28)`);
+      grad.addColorStop(1, `rgba(${col}, 0)`);
+
       ctx2.beginPath();
       points.forEach((p, i) => {
-        const x = (p.t / T) * W, y = H - (Math.min(p.m, maxM) / maxM) * (H * 0.86) - H * 0.06;
-        i === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
+        const x = (p.t / T) * (W * 0.88) + W * 0.04;
+        const y = H - (Math.min(p.m, maxM) / maxM) * (H * 0.78) - H * 0.08;
+        if (i === 0) ctx2.moveTo(x, y);
+        else ctx2.lineTo(x, y);
       });
-      ctx2.strokeStyle = busted ? '#ff4655' : '#e9bd5c'; ctx2.lineWidth = 3 * dpr;
-      ctx2.shadowColor = busted ? '#ff4655' : '#e9bd5c'; ctx2.shadowBlur = 14;
+
+      ctx2.strokeStyle = isRed ? '#ef4444' : '#10b981';
+      ctx2.lineWidth = 3.5 * dpr;
+      ctx2.shadowColor = isRed ? '#ef4444' : '#10b981';
+      ctx2.shadowBlur = 18 * dpr;
       ctx2.stroke();
       ctx2.shadowBlur = 0;
-      const lx = (points[n - 1].t / T) * W, ly = H - (Math.min(points[n - 1].m, maxM) / maxM) * (H * 0.86) - H * 0.06;
-      ctx2.lineTo(lx, H); ctx2.lineTo(0, H); ctx2.closePath();
-      ctx2.fillStyle = grad; ctx2.fill();
+
+      // Close polygon for glowing gradient fill underneath
+      const last = points[n - 1];
+      const lx = (last.t / T) * (W * 0.88) + W * 0.04;
+      const ly = H - (Math.min(last.m, maxM) / maxM) * (H * 0.78) - H * 0.08;
+      ctx2.lineTo(lx, H);
+      ctx2.lineTo(points[0].t / T * (W * 0.88) + W * 0.04, H);
+      ctx2.closePath();
+      ctx2.fillStyle = grad;
+      ctx2.fill();
+
+      // Draw Rocket Comet Head
+      ctx2.save();
+      ctx2.fillStyle = isRed ? '#ef4444' : '#ffd700';
+      ctx2.shadowColor = isRed ? '#ef4444' : '#ffd700';
+      ctx2.shadowBlur = 20 * dpr;
+      ctx2.beginPath();
+      ctx2.arc(lx, ly, 6 * dpr, 0, Math.PI * 2);
+      ctx2.fill();
+      ctx2.restore();
     }
   }
+
   function curMult() {
     if (!st) return 1;
-    if (st.phase === 'run') return Math.exp(GROWTH * (Date.now() - st.startedAt) / 1000);
-    return st.phase === 'bust' || st.phase === 'bet' ? (st.mult || 1) : 1;
+    if (st.phase === 'run') {
+      const elapsed = (Date.now() - (st.startedAt || Date.now())) / 1000;
+      return Math.min(st.crashAt || 999, Math.exp(GROWTH * elapsed));
+    }
+    return (st.phase === 'bust' || st.phase === 'bet') ? (st.mult || 1) : 1;
   }
+
   function loop() {
     if (st && st.phase === 'run') {
       const m = curMult();
       points.push({ t: Date.now() - st.startedAt, m });
-      $('#rumult').textContent = m.toFixed(2) + '×';
+      const multEl = $('#rumult');
+      if (multEl) {
+        multEl.textContent = m.toFixed(2) + '×';
+        multEl.style.color = m >= 10 ? '#ffd700' : m >= 2 ? '#34d399' : '#fff';
+      }
       const myBet = st.bets.find(b => APP.user && b.u === APP.user.id);
-      if (myBet && !myBet.c) $('#rucashval').textContent = '(+' + fmt(myBet.a * m) + ')';
+      if (myBet && !myBet.c) {
+        const cashVal = $('#rucashval');
+        if (cashVal) cashVal.textContent = `(+${fmt(myBet.a * m)} coins)`;
+      }
     }
     draw();
     raf = requestAnimationFrame(loop);
   }
-  raf = requestAnimationFrame(loop); onRoute(() => cancelAnimationFrame(raf));
+  raf = requestAnimationFrame(loop);
+  onRoute(() => cancelAnimationFrame(raf));
 
   function render() {
     if (!st) return;
-    $('#ruhist').innerHTML = (st.history || []).slice().reverse().map(hh =>
-      `<div class="rh-pill ${hh.m >= 10 ? 'hi' : hh.m >= 2 ? 'mid' : 'lo'}">${hh.m.toFixed(2)}×</div>`).join('');
-    $('#rubets').innerHTML = st.bets.map(b => `
-      <div class="bet-row"><div class="avatar sm">${esc(b.n.slice(0, 2).toUpperCase())}</div>
-        <span class="grow">${esc(b.n)}</span><b class="num">${fmt(b.a)}</b>
-        ${b.c ? `<span class="side-tag st-win">×${b.at.toFixed(2)}</span>` : st.phase === 'bust' ? '<span class="side-tag st-lose">LOST</span>' : '<span class="side-tag" style="background:rgba(233,189,92,.12);color:var(--cyan)">IN</span>'}
-      </div>`).join('') || '<div class="muted">No bets yet this round</div>';
+    
+    // History strip
+    const histEl = $('#ruhist');
+    if (histEl) {
+      histEl.innerHTML = (st.history || []).slice().reverse().map(hh => {
+        const val = typeof hh === 'number' ? hh : (hh.m || 1);
+        const cls = val >= 10 ? 'hi' : val >= 2 ? 'mid' : 'lo';
+        return `<div class="rh-pill ${cls}" style="font-weight:800;font-size:12.5px;padding:4px 10px;border-radius:6px;background:${val>=10?'rgba(255,215,0,.15)':val>=2?'rgba(16,185,129,.15)':'rgba(148,163,184,.15)'};color:${val>=10?'#ffd700':val>=2?'#10b981':'#94a3b8'}">${val.toFixed(2)}×</div>`;
+      }).join('');
+    }
+
+    // Bets List
+    const betsEl = $('#rubets');
+    if (betsEl) {
+      betsEl.innerHTML = st.bets.map(b => `
+        <div class="bet-row" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03)">
+          <div class="avatar sm"><img src="${b.p || 'img/avatars/avatar_1.svg'}" alt="" style="width:28px;height:28px;border-radius:50%"></div>
+          <span class="grow" style="font-weight:700;font-size:13px">${esc(b.n)}</span>
+          <b class="num" style="font-size:13px">${fmt(b.a)} coins</b>
+          ${b.c ? `<span class="side-tag st-win" style="background:rgba(16,185,129,.2);color:#10b981;padding:3px 8px;border-radius:4px;font-weight:800;font-size:11.5px">×${b.at.toFixed(2)} (+${fmt(b.a * b.at)})</span>` : (st.phase === 'bust' ? '<span class="side-tag st-lose" style="background:rgba(239,68,68,.2);color:#ef4444;padding:3px 8px;border-radius:4px;font-weight:800;font-size:11.5px">CRASHED</span>' : '<span class="side-tag" style="background:rgba(16,185,129,.12);color:var(--green);padding:3px 8px;border-radius:4px;font-weight:800;font-size:11.5px">FLYING 🚀</span>')}
+        </div>`).join('') || '<div class="muted" style="padding:14px;text-align:center">No bets placed yet this round</div>';
+    }
+
     const betting = st.phase === 'bet';
-    $('#rubet').classList.toggle('hidden', !betting);
-    $('#ruamt').disabled = !betting; $('#ruauto').disabled = !betting;
+    const betBtn = $('#rubet');
+    const cashBtn = $('#rucash');
+    const amtInput = $('#ruamt');
+    const autoInput = $('#ruauto');
+    
+    if (betBtn) betBtn.classList.toggle('hidden', !betting);
+    if (amtInput) amtInput.disabled = !betting;
+    if (autoInput) autoInput.disabled = !betting;
+
     const myBet = st.bets.find(b => APP.user && b.u === APP.user.id);
-    $('#rucash').classList.toggle('hidden', !(st.phase === 'run' && myBet && !myBet.c));
-    const left = Math.max(0, Math.ceil((st.endsAt - Date.now()) / 1000));
-    $('#rutimer').innerHTML = betting ? `⏳ Betting closes in <span class="t">${left}s</span>` : st.phase === 'run' ? '🚀 RISING' : '💥 CRASHED';
-    if (st.phase === 'bet') { points = []; busted = false; $('#rumult').textContent = '1.00×'; $('#rumult').classList.remove('crashed'); }
+    if (cashBtn) cashBtn.classList.toggle('hidden', !(st.phase === 'run' && myBet && !myBet.c));
+
+    const timerEl = $('#rutimer');
+    if (timerEl) {
+      const left = Math.max(0, Math.ceil(((st.endsAt || Date.now()) - Date.now()) / 1000));
+      timerEl.innerHTML = betting
+        ? `⏳ Next round in <span class="t" style="color:var(--green);font-weight:800">${left}s</span>`
+        : st.phase === 'run' ? '🚀 <span style="color:#ffd700;font-weight:800">FLYING...</span>' : '💥 <span style="color:#ef4444;font-weight:800">CRASHED</span>';
+    }
+
+    if (st.phase === 'bet') {
+      points = [];
+      busted = false;
+      const multEl = $('#rumult');
+      if (multEl) {
+        multEl.textContent = '1.00×';
+        multEl.style.color = '#fff';
+      }
+    }
   }
+
   $('#rubet').onclick = async () => {
     if (needLogin()) return;
     try {
       const amount = Math.max(10, Math.round(+$('#ruamt').value || 0));
       const auto = Math.round((+$('#ruauto').value || 0) * 100) / 100;
-      await api('/rush/bet', { method: 'POST', body: { amount, auto } });
-      toast('Bet placed — get ready to rush! 🚀'); SND.coin();
-    } catch (e) { toast(e.message, 'err'); }
+      const r = await api('/crash/bet', { method: 'POST', body: { amount, auto } });
+      setBal(r.balance);
+      toast('Bet placed — get ready for takeoff! 🚀');
+      SND.coin();
+    } catch (e) {
+      toast(e.message, 'err');
+    }
   };
+
   $('#rucash').onclick = async () => {
     try {
-      const r = await api('/rush/cashout', { method: 'POST' });
+      const r = await api('/crash/cashout', { method: 'POST' });
       setBal(r.balance);
-      toast(`Cashed out ×${r.mult.toFixed(2)} — won ${fmt(r.win)} coins!`); SND.cash();
-    } catch (e) { toast(e.message, 'err'); }
+      toast(`Cashed out at ×${r.mult.toFixed(2)} — won +${fmt(r.win)} coins! 🎉`);
+      SND.cash();
+    } catch (e) {
+      toast(e.message, 'err');
+    }
   };
-  (async () => { st = await api('/rush/state'); render(); })();
+
+  (async () => {
+    st = await api('/crash/state');
+    render();
+  })();
+
   const h = s => {
     st = s;
-    if (st.phase !== 'run') { st.startedAt = st.startedAt || 0; }
     render();
   };
-  APP.socket.on('rush', h); onRoute(() => APP.socket.off('rush', h));
+
+  APP.socket.on('crash', h);
+  APP.socket.on('rush', h);
+  onRoute(() => {
+    APP.socket.off('crash', h);
+    APP.socket.off('rush', h);
+  });
+
   APP.socket.on('rush:bust', ({ crashAt }) => {
-    busted = true; SND.bust();
+    busted = true;
+    SND.bust();
     const m = $('#rumult');
-    m.textContent = crashAt.toFixed(2) + '×';
-    m.classList.add('crashed');
+    if (m) {
+      m.textContent = (crashAt || 1).toFixed(2) + '×';
+      m.style.color = '#ef4444';
+    }
     if (st) st.mult = crashAt;
   });
   onRoute(() => APP.socket.off('rush:bust'));
-  const t = setInterval(render, 900); onRoute(() => clearInterval(t));
+
+  const t = setInterval(render, 500);
+  onRoute(() => clearInterval(t));
 });
+
+register('rushmid', (view) => APP.routes.crash(view));

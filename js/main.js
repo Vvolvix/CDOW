@@ -200,7 +200,7 @@ function renderShell() {
     ['#/x50', 'wheel', 'X50'],
     ['#/upgrader', 'up', 'Upgrader'],
     ['#/royal', 'crown', 'Royal Battle'],
-    ['#/rushmid', 'rocket', 'RUSHMID'],
+    ['#/crash', 'rocket', 'Crash'],
     ['', 'Account'],
     ['#/deposit', 'plus', 'Deposit'],
     ['#/tasks', 'tasks', 'Tasks'],
@@ -225,8 +225,8 @@ function renderShell() {
     </div>
     ${sideHTML}
   </aside>
-  <div class="main">
-    <header class="topbar">
+  <div class="main-wrap">
+    <header class="header">
       <button class="hamburger" id="hmenub">☰</button>
       <div class="brand-mini" onclick="location.hash='#/'">
         <img class="logo-img-topbar" src="img/logo.png" alt="CDOW" draggable="false">
@@ -263,7 +263,8 @@ function closeDrawer() { const d = $('#drawer'); if (!d) return; d.classList.rem
 function renderHeader() { renderShell(); markNav(); }
 function markNav() {
   const h = location.hash || '#/';
-  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.href === h));
+  const normH = h === '#/rushmid' ? '#/crash' : h;
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.href === normH));
 }
 
 // ---------------- Butter-Smooth Continuous Live Wins Ticker Engine ----------------

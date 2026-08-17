@@ -103,7 +103,7 @@ register('home', async (view) => {
     ['#/x50', 'wheel', 'X50', 'Spin the multiwheel — up to ×50'],
     ['#/upgrader', 'up', 'Upgrader', 'Upgrade coins into rare CS2 skins'],
     ['#/royal', 'crown', 'Royal Battle', 'Jackpot — one takes the crown'],
-    ['#/rushmid', 'rocket', 'RUSHMID', 'Cash out before the rush busts'],
+    ['#/crash', 'rocket', 'Crash', 'Cash out before the rocket crashes'],
     ['#/tasks', 'tasks', 'Tasks & Rewards', 'Daily freebies & +5000 referrals'],
   ];
 
