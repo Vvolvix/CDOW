@@ -1,9 +1,33 @@
-// CDOW — Complete Standalone Client Simulation Engine for GitHub Pages (100% Free Hosting)
+// CDOW — Complete Standalone Client Simulation Engine & Persistent Multi-User Database
 // Implements 100% of all platform endpoints: 52 cases, Case Battles, Double, Upgrader, X50, Profile, Inventory, Tasks, Real Daily Countdowns.
 
 (function() {
   const isStaticHost = location.hostname.endsWith('github.io') || location.protocol === 'file:';
   const DAY_MS = 24 * 3600 * 1000;
+
+  // ---------------- PERMANENT MULTI-USER DATABASE ----------------
+  function loadUsersDb() {
+    try {
+      return JSON.parse(localStorage.getItem('cdow_users_db') || '{}');
+    } catch {
+      return {};
+    }
+  }
+
+  function saveUsersDb(db) {
+    try {
+      localStorage.setItem('cdow_users_db', JSON.stringify(db));
+    } catch (e) {
+      console.error('Error saving users DB:', e);
+    }
+  }
+
+  function getUserKey(u) {
+    if (!u) return null;
+    if (u.steamId && /^7656\d+$/.test(u.steamId)) return 'steam_' + u.steamId;
+    if (u.name) return 'usr_' + u.name.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    return u.id || 'usr_guest';
+  }
 
   // Initial State — Fresh visitors start as GUEST (Unauthenticated, 0 coins)
   let user = JSON.parse(localStorage.getItem('cdow_user') || 'null');
@@ -12,6 +36,12 @@
     if (user) {
       localStorage.setItem('cdow_user', JSON.stringify(user));
       if (window.APP) window.APP.user = user;
+      const key = getUserKey(user);
+      if (key) {
+        const db = loadUsersDb();
+        db[key] = JSON.parse(JSON.stringify(user));
+        saveUsersDb(db);
+      }
     } else {
       localStorage.removeItem('cdow_user');
       if (window.APP) window.APP.user = null;
@@ -187,6 +217,9 @@
   window.CDOW_STANDALONE = {
     isStatic: isStaticHost,
     socket: socket,
+    loadUsersDb,
+    saveUsersDb,
+    getUserKey,
 
     async handleApi(path, opts = {}) {
       const body = opts.body || {};
@@ -206,29 +239,48 @@
       if (path === '/me') {
         if (!user) throw new Error('Not authenticated');
         if (!user.tasks) user.tasks = {};
+        if (!user.inv) user.inv = [];
         return user;
       }
+
       if (path === '/auth/steam-direct' || path === '/auth/demo' || path === '/auth/steam') {
-        const name = (body.steamInput || 'Player_' + Math.floor(1000 + Math.random() * 9000)).trim();
+        const steamInput = String(body.steamInput || '').trim();
+        const steamId = body.steamId || (/^7656\d+$/.test(steamInput) ? steamInput : '');
+        const name = (body.name || (!steamId ? steamInput : '') || 'SteamPlayer_' + Math.floor(1000 + Math.random() * 9000)).trim();
         const photo = body.photo || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
-        user = {
-          id: 'usr_' + Date.now().toString(36),
-          name: name,
-          steamId: '76561198' + Math.floor(100000000 + Math.random() * 900000000),
-          photo: photo,
-          bal: 0, // Starts at 0 coins as requested
-          inv: [],
-          tradeUrl: '',
-          refCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
-          refCount: 0,
-          dailyAt: 0,
-          tasks: {},
-          stats: { opened: 0, wagered: 0, won: 0, battlesWon: 0 },
-          createdAt: Date.now()
-        };
+        
+        const key = steamId ? ('steam_' + steamId) : ('usr_' + name.toLowerCase().replace(/[^a-z0-9_]/g, ''));
+        const db = loadUsersDb();
+        
+        if (db[key]) {
+          // Existing user found in persistent database!
+          user = db[key];
+          if (body.name && body.name.trim()) user.name = body.name.trim();
+          if (body.photo && body.photo.trim()) user.photo = body.photo.trim();
+        } else {
+          // Brand new user — strictly starts with 0 coins and empty inventory
+          user = {
+            id: 'usr_' + (steamId || Date.now().toString(36)),
+            name: name,
+            steamId: steamId || ('76561198' + Math.floor(100000000 + Math.random() * 900000000)),
+            photo: photo,
+            bal: 0, // Starts at 0 coins as requested
+            inv: [],
+            tradeUrl: '',
+            refCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+            refCount: 0,
+            dailyAt: 0,
+            tasks: {},
+            stats: { opened: 0, wagered: 0, won: 0, battlesWon: 0 },
+            createdAt: Date.now()
+          };
+          db[key] = user;
+          saveUsersDb(db);
+        }
         saveUser();
-        return { token: 'gh_standalone_token', user };
+        return { token: 'gh_token_' + (user.steamId || user.id), user };
       }
+
       if (path === '/auth/steam-sync' || path === '/profile/update') {
         if (!user) throw new Error('Not authenticated');
         if (body.name) user.name = body.name.trim();
@@ -236,6 +288,7 @@
         saveUser();
         return { ok: true, user };
       }
+
       if (path === '/profile/tradeurl') {
         if (!user) throw new Error('Not authenticated');
         user.tradeUrl = body.url || '';
@@ -276,7 +329,7 @@
         ];
       }
 
-      // 5. Case Opening
+      // 5. Case Opening (Items & Coins permanently preserved in DB)
       if (path === '/cases/open') {
         if (!user) throw new Error('Please sign in first');
         const c = (window.CDOW_CATALOG.CASES || []).find(x => x.id === body.caseId);
@@ -399,7 +452,7 @@
         return { roll: Number(roll.toFixed(2)), won, balance: user.bal, target };
       }
 
-      // 9. Case Battles
+      // 9. Case Battles (Won skins permanently saved to inventory)
       if (path === '/battles') {
         return battlesList;
       }

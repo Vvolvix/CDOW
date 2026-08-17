@@ -60,26 +60,32 @@ async function boot() {
     const claimed = q.get('openid.claimed_id');
     const steamId = claimed.split('/').pop();
     if (/^7656\d+$/.test(steamId)) {
-      const existingUser = JSON.parse(localStorage.getItem('cdow_user') || 'null');
-      const defaultName = (existingUser && existingUser.name && !existingUser.name.startsWith('SteamPlayer_')) 
-        ? existingUser.name 
-        : ('Steam_' + steamId.slice(-4));
+      const usersDb = JSON.parse(localStorage.getItem('cdow_users_db') || '{}');
+      const dbKey = 'steam_' + steamId;
+      let u = usersDb[dbKey];
 
-      const u = {
-        id: 'usr_' + steamId,
-        name: defaultName,
-        steamId: steamId,
-        photo: (existingUser && existingUser.photo) || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
-        bal: (existingUser && typeof existingUser.bal === 'number') ? existingUser.bal : 0,
-        inv: (existingUser && existingUser.inv) || [],
-        tradeUrl: (existingUser && existingUser.tradeUrl) || '',
-        refCode: steamId.slice(-6).toUpperCase(),
-        refCount: (existingUser && existingUser.refCount) || 0,
-        dailyAt: (existingUser && existingUser.dailyAt) || 0,
-        tasks: (existingUser && existingUser.tasks) || {},
-        stats: (existingUser && existingUser.stats) || { opened: 0, wagered: 0, won: 0, battlesWon: 0 },
-        createdAt: (existingUser && existingUser.createdAt) || Date.now()
-      };
+      if (u) {
+        // Existing user! Coins & won inventory are 100% preserved!
+      } else {
+        // Fresh new user! Strictly 0 starting coins!
+        u = {
+          id: 'usr_' + steamId,
+          name: 'Steam_' + steamId.slice(-4),
+          steamId: steamId,
+          photo: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+          bal: 0,
+          inv: [],
+          tradeUrl: '',
+          refCode: steamId.slice(-6).toUpperCase(),
+          refCount: 0,
+          dailyAt: 0,
+          tasks: {},
+          stats: { opened: 0, wagered: 0, won: 0, battlesWon: 0 },
+          createdAt: Date.now()
+        };
+        usersDb[dbKey] = u;
+        localStorage.setItem('cdow_users_db', JSON.stringify(usersDb));
+      }
       
       APP.token = 'steam_' + steamId;
       localStorage.setItem('cdow_token', APP.token);
