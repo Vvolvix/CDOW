@@ -147,7 +147,7 @@ register('double', (view) => {
 
 // ---------------- X50 (with Live Community Bets & Emerald/Gold Theme) ----------------
 register('x50', (view) => {
-  const SEGMENTS = [0, 1.2, 0, 1.5, 0, 2, 0, 1.2, 0, 3, 0, 1.5, 0, 2, 0, 1.2, 0, 5, 0, 10, 0, 50];
+  const SEGMENTS = [50, 0, 1.2, 0, 1.5, 0, 2, 0, 1.2, 0, 3, 0, 1.5, 0, 2, 0, 1.2, 0, 5, 0, 10, 0];
   const N = SEGMENTS.length;
   
   // Custom theme colors: 50x in Gold Gradient, 10x in Pure Gold, others in dark & light emerald greens, 0 in dark carbon
@@ -274,22 +274,52 @@ register('x50', (view) => {
     const amount = Math.max(10, Math.round(+$('#xamt').value || 0));
     spinning = true; $('#xspin').disabled = true; $('#x50res').textContent = '';
     let r;
-    try { r = await api('/x50/spin', { method: 'POST', body: { amount } }); setBal(r.balance); }
-    catch (e) { spinning = false; $('#xspin').disabled = false; return toast(e.message, 'err'); }
-    const idx = SEGMENTS.findIndex(m => m === r.mult);
-    const segMid = 360 - ((idx + 0.5) / N) * 360;
+    try {
+      r = await api('/x50/spin', { method: 'POST', body: { amount } });
+      setBal(r.balance);
+    } catch (e) {
+      spinning = false; $('#xspin').disabled = false;
+      return toast(e.message, 'err');
+    }
+
+    const chosenIdx = (r && r.index !== undefined) ? r.index : SEGMENTS.findIndex(m => m === r.mult);
+    const segMid = (360 - ((chosenIdx + 0.5) / N) * 360) % 360;
     const target = rot + 360 * 6 + ((segMid - (rot % 360)) + 360) % 360;
+
     SND.whoosh();
     wheel.style.transition = 'transform 5.2s cubic-bezier(.15,.8,.15,1)';
-    rot = target; applyRot();
-    let delay = 55; const tickLoop = () => { if (delay > 300) return; SND.tick(r.mult >= 10); delay *= 1.12; setTimeout(tickLoop, delay); }; tickLoop();
+    rot = target;
+    applyRot();
+
+    let delay = 55;
+    const tickLoop = () => {
+      if (delay > 300) return;
+      SND.tick(r.mult >= 10);
+      delay *= 1.12;
+      setTimeout(tickLoop, delay);
+    };
+    tickLoop();
+
     setTimeout(() => {
-      spinning = false; $('#xspin').disabled = false;
+      spinning = false;
+      $('#xspin').disabled = false;
       const res = $('#x50res');
-      if (r.mult === 50) { res.className = 'x50-result jackpot'; res.textContent = '🎉 ×50 JACKPOT 🎉'; SND.bigWin(); }
-      else if (r.mult > 0) { res.className = 'x50-result'; res.style.color = segColor(r.mult); res.textContent = '×' + r.mult; SND.win(); }
-      else { res.className = 'x50-result'; res.style.color = 'var(--red)'; res.textContent = '×0 — no win'; SND.lose(); }
-      if (r.win > 0) toast(`You won ${fmt(r.win)} coins!`);
+      if (r.mult === 50) {
+        res.className = 'x50-result jackpot';
+        res.innerHTML = `🎉 ×50 PINNACLE JACKPOT (+${fmt(r.win)} coins) 🎉`;
+        SND.bigWin();
+      } else if (r.mult > 0) {
+        res.className = 'x50-result';
+        res.style.color = segColor(r.mult);
+        res.innerHTML = `×${r.mult} WIN — <b style="color:var(--green)">+${fmt(r.win)} COINS</b>`;
+        SND.win();
+      } else {
+        res.className = 'x50-result';
+        res.style.color = 'var(--red)';
+        res.textContent = '✕ ×0 — No win this round';
+        SND.lose();
+      }
+      if (r.win > 0) toast(`You won +${fmt(r.win)} coins! 🎉`);
     }, 5300);
   };
 });

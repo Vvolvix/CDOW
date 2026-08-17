@@ -381,7 +381,7 @@
         return { ok: true, balance: user.bal };
       }
 
-      // 7. X50 State & Bet
+      // 7. X50 State, Bet & Instant Spin
       if (path === '/x50/state') {
         return x50State;
       }
@@ -401,6 +401,51 @@
         socket.emit('x50', x50State);
 
         return { ok: true, balance: user.bal };
+      }
+      if (path === '/x50/spin') {
+        if (!user) throw new Error('Please sign in first');
+        const amount = Math.max(10, Math.round(+(body.amount || 0)));
+        if (user.bal < amount) throw new Error('Insufficient coins balance');
+
+        user.bal -= amount;
+        user.stats.wagered += amount;
+
+        const X50_SEGMENTS = [50, 0, 1.2, 0, 1.5, 0, 2, 0, 1.2, 0, 3, 0, 1.5, 0, 2, 0, 1.2, 0, 5, 0, 10, 0];
+
+        // Dynamic balanced probabilities:
+        // Frequent 1.2x, 1.5x, 2x, up to 3x wins (~69% total win), ~31% loss chance
+        const roll = Math.random() * 100;
+        let chosenMult = 0;
+        if (roll < 30) chosenMult = 1.2;
+        else if (roll < 48) chosenMult = 1.5;
+        else if (roll < 60) chosenMult = 2;
+        else if (roll < 66) chosenMult = 3;
+        else if (roll < 68) chosenMult = 5;
+        else if (roll < 68.8) chosenMult = 10;
+        else if (roll < 69) chosenMult = 50;
+        else chosenMult = 0;
+
+        const matchingIndices = [];
+        X50_SEGMENTS.forEach((m, idx) => {
+          if (m === chosenMult) matchingIndices.push(idx);
+        });
+        const chosenIndex = matchingIndices[Math.floor(Math.random() * matchingIndices.length)];
+
+        let winCoins = 0;
+        if (chosenMult > 0) {
+          winCoins = Math.round(amount * chosenMult);
+          user.bal += winCoins;
+          user.stats.won += winCoins;
+        }
+        saveUser();
+
+        return {
+          ok: true,
+          mult: chosenMult,
+          win: winCoins,
+          index: chosenIndex,
+          balance: user.bal
+        };
       }
 
       // 8. Upgrader Targets & Roll
