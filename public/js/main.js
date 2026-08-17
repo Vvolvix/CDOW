@@ -225,8 +225,8 @@ function renderShell() {
     </div>
     ${sideHTML}
   </aside>
-  <div class="main-wrap">
-    <header class="header">
+  <div class="main">
+    <header class="topbar">
       <button class="hamburger" id="hmenub">☰</button>
       <div class="brand-mini" onclick="location.hash='#/'">
         <img class="logo-img-topbar" src="img/logo.png" alt="CDOW" draggable="false">
